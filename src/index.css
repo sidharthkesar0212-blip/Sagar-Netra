@@ -1,0 +1,106 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  html {
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+  body {
+    background-color: #F7FBFE;
+    color: #082B52;
+  }
+}
+
+@layer components {
+  .text-brand-sagar {
+    color: #082B52;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+  }
+  .text-brand-netra {
+    color: #0968B4;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+  }
+  .label-sm {
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .label-xs {
+    font-size: 0.625rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+  .contour-bg {
+    background-image:
+      radial-gradient(ellipse 600px 300px at 20% 50%, rgba(36, 152, 208, 0.03) 0%, transparent 70%),
+      radial-gradient(ellipse 500px 250px at 80% 30%, rgba(9, 104, 180, 0.03) 0%, transparent 70%);
+  }
+  .scan-line {
+    background-image: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(9, 104, 180, 0.015) 2px,
+      rgba(9, 104, 180, 0.015) 4px
+    );
+  }
+  .hero-wordmark {
+    font-size: clamp(2.25rem, 5vw, 4rem);
+    font-weight: 700;
+    letter-spacing: 0.26em;
+    line-height: 1;
+    padding-left: 0.26em;
+    text-shadow: 0 1px 16px rgba(255, 255, 255, 0.45);
+  }
+}
+
+
+@layer utilities {
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  .scrollbar-thin::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    background: #B4CCE4;
+    border-radius: 3px;
+  }
+  .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+    background: #7BA0CC;
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-in {
+  animation: fadeIn 0.4s ease-out;
+}
+
+@keyframes pulse-soft {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+.animate-pulse-soft {
+  animation: pulse-soft 2s ease-in-out infinite;
+}
+
+@keyframes scan-sweep {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(100%); }
+}
+.animate-scan-sweep {
+  animation: scan-sweep 4s linear infinite;
+}

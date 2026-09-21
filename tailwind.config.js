@@ -1,0 +1,69 @@
+/** @type {import('tailwindcss').Config} */
+export default {
+  content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
+  theme: {
+    extend: {
+      fontFamily: {
+        sans: ['Inter', 'system-ui', 'sans-serif'],
+      },
+      colors: {
+        navy: {
+          DEFAULT: '#082B52',
+          50: '#F0F5FA',
+          100: '#DCE8F4',
+          200: '#B4CCE4',
+          300: '#7BA0CC',
+          400: '#4A78B0',
+          500: '#1F5390',
+          600: '#0D3F73',
+          700: '#082B52',
+          800: '#062140',
+          900: '#041830',
+        },
+        ocean: {
+          DEFAULT: '#0968B4',
+          50: '#EAF5FC',
+          100: '#D0EAF8',
+          200: '#A6D5F0',
+          300: '#6FBDE5',
+          400: '#3AABDB',
+          500: '#0968B4',
+          600: '#07528F',
+          700: '#053D6B',
+          800: '#042B4D',
+          900: '#021E35',
+        },
+        teal: {
+          DEFAULT: '#2498D0',
+          50: '#E8F4FB',
+          100: '#CFE6F5',
+          200: '#9FCCE9',
+          300: '#6FB3DD',
+          400: '#3F9DD1',
+          500: '#2498D0',
+          600: '#1A7AAB',
+          700: '#135E83',
+          800: '#0D4259',
+          900: '#072A3B',
+        },
+        mist: {
+          DEFAULT: '#F7FBFE',
+          50: '#FFFFFF',
+          100: '#F7FBFE',
+          200: '#EFF7FC',
+          300: '#E3F0F9',
+          400: '#D4E9F5',
+        },
+      },
+      boxShadow: {
+        card: '0 1px 3px 0 rgba(8, 43, 82, 0.06), 0 1px 2px 0 rgba(8, 43, 82, 0.04)',
+        'card-hover': '0 4px 12px 0 rgba(8, 43, 82, 0.08), 0 2px 4px 0 rgba(8, 43, 82, 0.04)',
+        nav: '0 1px 0 0 rgba(8, 43, 82, 0.06)',
+      },
+      borderRadius: {
+        card: '8px',
+      },
+    },
+  },
+  plugins: [],
+};
