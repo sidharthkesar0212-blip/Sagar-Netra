@@ -7,7 +7,6 @@ import {
   Shield,
   BarChart3,
   PieChart as PieChartIcon,
-  Map as MapIcon,
   ListFilter,
   FileSpreadsheet,
   FileCode,
@@ -17,12 +16,18 @@ import {
   ExternalLink,
   CheckCircle2,
   Filter,
+  ShieldCheck,
+  ChevronRight,
+  Printer,
+  X,
+  Activity,
 } from 'lucide-react';
 import {
   REVIEWED_DETECTIONS_TABLE,
   SURVEY_HOTSPOTS,
   ReviewedDetectionRow,
 } from '@/data/surveyWorkflowData';
+import { OBSERVABILITY_METRICS_MAP, ObservabilityMetrics } from '@/data/sonarAnalysisData';
 
 export default function Reports() {
   const navigate = useNavigate();
@@ -30,6 +35,36 @@ export default function Reports() {
   const [detections] = useState<ReviewedDetectionRow[]>(REVIEWED_DETECTIONS_TABLE);
   const [filterClass, setFilterClass] = useState<string>('all');
   const [downloadSuccess, setDownloadSuccess] = useState<string | null>(null);
+  const [showObservabilityAudit, setShowObservabilityAudit] = useState<boolean>(false);
+
+  // Compute aggregate observability across all 15 authentic survey images
+  const obsList = useMemo(() => {
+    return Object.entries(OBSERVABILITY_METRICS_MAP).map(([filename, metric]) => ({
+      filename,
+      ...metric,
+    }));
+  }, []);
+
+  const totalObsSwaths = obsList.length;
+  const avgReliabilityScore = useMemo(() => {
+    return Math.round(obsList.reduce((acc, m) => acc + m.surveyReliabilityScore, 0) / totalObsSwaths);
+  }, [obsList, totalObsSwaths]);
+
+  const avgUsableArea = useMemo(() => {
+    return (obsList.reduce((acc, m) => acc + m.usableAreaPercent, 0) / totalObsSwaths).toFixed(1);
+  }, [obsList, totalObsSwaths]);
+
+  const avgSnr = useMemo(() => {
+    return (obsList.reduce((acc, m) => acc + m.snrDb, 0) / totalObsSwaths).toFixed(1);
+  }, [obsList, totalObsSwaths]);
+
+  const avgNadirGap = useMemo(() => {
+    return (obsList.reduce((acc, m) => acc + m.nadirGapPercent, 0) / totalObsSwaths).toFixed(1);
+  }, [obsList, totalObsSwaths]);
+
+  const avgShadow = useMemo(() => {
+    return (obsList.reduce((acc, m) => acc + m.acousticShadowPercent, 0) / totalObsSwaths).toFixed(1);
+  }, [obsList, totalObsSwaths]);
 
   // Filtered detections based on tab
   const filteredDetections = useMemo(() => {
@@ -143,10 +178,10 @@ export default function Reports() {
     showSuccess('GeoJSON GIS package exported successfully');
   };
 
-  // Trigger PDF print
+  // Trigger PDF print in dedicated new tab
   const handleExportPDF = () => {
-    window.print();
-    showSuccess('Preparing survey dossier PDF print preview');
+    window.open('/print-report', '_blank');
+    showSuccess('Opening printable survey dossier in new tab');
   };
 
   // Trigger detection manifest JSON export
@@ -408,91 +443,91 @@ export default function Reports() {
           </div>
         </div>
 
-        {/* Card 3: Map Extent Preview */}
-        <div className="lg:col-span-4 bg-white border border-navy-100/80 rounded-xl p-5 shadow-xs flex flex-col">
-          <div className="flex items-center justify-between text-navy font-semibold text-sm mb-4">
+        {/* Card 3: Survey Reliability & Acoustic Coverage */}
+        <div className="lg:col-span-4 bg-white border border-navy-100/80 rounded-xl p-5 shadow-xs flex flex-col justify-between">
+          <div className="flex items-center justify-between text-navy font-semibold text-sm mb-2">
             <div className="flex items-center gap-2">
-              <MapIcon size={16} className="text-ocean" />
-              <span>Survey Spatial Extent</span>
+              <ShieldCheck size={17} className="text-teal-600" />
+              <span>Survey Reliability Index</span>
             </div>
             <button
-              onClick={() => navigate('/debris-hotspots')}
-              className="text-xs font-semibold text-ocean hover:underline flex items-center gap-1"
+              onClick={() => setShowObservabilityAudit(true)}
+              className="text-[11px] font-mono text-ocean hover:underline flex items-center gap-1 cursor-pointer font-bold"
+              title="Click to view all survey frame observability metrics"
             >
-              <span>Inspect Map</span>
-              <ExternalLink size={12} />
+              <span>Survey Audit</span>
+              <ChevronRight size={12} />
             </button>
           </div>
 
-          {/* Mini Hotspot Map Preview */}
-          <div
-            onClick={() => navigate('/debris-hotspots')}
-            className="relative flex-1 min-h-[160px] bg-[#071927] rounded-lg overflow-hidden cursor-pointer group"
-          >
-            <div
-              className="absolute inset-0 opacity-80"
-              style={{
-                backgroundImage: `radial-gradient(circle at 35% 35%, rgba(14, 116, 144, 0.4) 0%, transparent 60%),
-                                  radial-gradient(circle at 70% 50%, rgba(3, 105, 161, 0.35) 0%, transparent 55%),
-                                  linear-gradient(#030d17, #071927)`,
-              }}
-            />
+          {/* Circular Progress Gauge & Score */}
+          <div className="flex items-center justify-center gap-5 py-2">
+            <div className="relative w-28 h-28 flex items-center justify-center flex-shrink-0">
+              <svg className="w-full h-full -rotate-90" viewBox="0 0 100 100">
+                <circle
+                  cx="50"
+                  cy="50"
+                  r="38"
+                  className="stroke-slate-100"
+                  strokeWidth="8"
+                  fill="transparent"
+                />
+                <circle
+                  cx="50"
+                  cy="50"
+                  r="38"
+                  stroke="currentColor"
+                  className="text-teal-500 transition-all duration-1000 ease-out"
+                  strokeWidth="8"
+                  strokeDasharray={238.76}
+                  strokeDashoffset={238.76 - (238.76 * avgReliabilityScore) / 100}
+                  strokeLinecap="round"
+                  fill="transparent"
+                />
+              </svg>
+              <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
+                <span className="text-2xl font-black font-mono text-navy leading-none">
+                  {avgReliabilityScore}
+                </span>
+                <span className="text-[10px] font-mono font-bold text-navy-400 mt-0.5">
+                  / 100
+                </span>
+              </div>
+            </div>
 
-            {/* Clusters */}
-            <div className="absolute top-[28%] left-[28%] -translate-x-1/2 -translate-y-1/2 flex flex-col items-center">
-              <span className="text-[9px] font-bold font-mono text-white bg-navy-900/80 px-1 rounded">
-                H-1
+            <div className="space-y-1.5">
+              <span className="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-emerald-100 text-emerald-800 border border-emerald-200">
+                HIGH RELIABILITY
               </span>
-              <div className="w-8 h-8 rounded-full bg-rose-500/30 border border-dashed border-rose-400 flex items-center justify-center">
-                <div className="w-2.5 h-2.5 rounded-full bg-rose-500 border border-white" />
+              <div className="text-xs font-bold text-navy font-mono">
+                Acoustic Observability
+              </div>
+              <p className="text-[11px] text-navy-400 leading-tight">
+                Synthesized across all 15 authentic survey images in Sector 4B.
+              </p>
+              <div className="flex items-center gap-1.5 text-[10px] font-mono font-semibold text-rose-700 bg-rose-50 px-2 py-0.5 rounded border border-rose-100">
+                <span>Hotspots: 4 Clusters (P1 - High)</span>
               </div>
             </div>
+          </div>
 
-            <div className="absolute top-[68%] left-[42%] -translate-x-1/2 -translate-y-1/2 flex flex-col items-center">
-              <span className="text-[9px] font-bold font-mono text-white bg-navy-900/80 px-1 rounded">
-                H-2
-              </span>
-              <div className="w-7 h-7 rounded-full bg-rose-500/30 border border-dashed border-rose-400 flex items-center justify-center">
-                <div className="w-2.5 h-2.5 rounded-full bg-rose-500 border border-white" />
-              </div>
+          {/* 4 Telemetry Mini-Badges */}
+          <div className="grid grid-cols-2 gap-2 pt-3 border-t border-navy-50 text-[11px] font-mono">
+            <div className="p-2 rounded-lg bg-slate-50 border border-slate-100 flex flex-col">
+              <span className="text-[9px] text-navy-400 uppercase">Acoustic Clarity</span>
+              <span className="font-bold text-emerald-700">{avgUsableArea}%</span>
             </div>
-
-            <div className="absolute top-[38%] left-[74%] -translate-x-1/2 -translate-y-1/2 flex flex-col items-center">
-              <span className="text-[9px] font-bold font-mono text-white bg-navy-900/80 px-1 rounded">
-                H-3
-              </span>
-              <div className="w-6 h-6 rounded-full bg-emerald-500/30 border border-dashed border-emerald-400 flex items-center justify-center">
-                <div className="w-2 rounded-full bg-emerald-400 border border-white h-2" />
-              </div>
+            <div className="p-2 rounded-lg bg-slate-50 border border-slate-100 flex flex-col">
+              <span className="text-[9px] text-navy-400 uppercase">Mean SNR</span>
+              <span className="font-bold text-navy">{avgSnr} dB</span>
             </div>
-
-            <div className="absolute top-[72%] left-[76%] -translate-x-1/2 -translate-y-1/2 flex flex-col items-center">
-              <span className="text-[9px] font-bold font-mono text-white bg-navy-900/80 px-1 rounded">
-                H-4
-              </span>
-              <div className="w-6 h-6 rounded-full bg-orange-500/30 border border-dashed border-orange-400 flex items-center justify-center">
-                <div className="w-2 rounded-full bg-orange-400 border border-white h-2" />
-              </div>
+            <div className="p-2 rounded-lg bg-slate-50 border border-slate-100 flex flex-col">
+              <span className="text-[9px] text-navy-400 uppercase">Nadir Gap</span>
+              <span className="font-bold text-slate-700">{avgNadirGap}%</span>
             </div>
-
-            <div className="absolute bottom-2 left-2 text-[9px] font-mono text-ocean-200 flex items-center gap-1.5 bg-navy-900/80 px-1.5 py-0.5 rounded">
-              <div className="w-6 h-0.5 bg-white rounded-full" />
-              <span>1 km</span>
-            </div>
-
-            <div className="absolute bottom-2 right-2 text-[9px] text-white/90 bg-navy-900/80 px-2 py-1 rounded space-y-0.5 font-mono">
-              <div className="flex items-center gap-1.5">
-                <span className="w-1.5 h-1.5 rounded-full bg-rose-500" />
-                <span>High (H-1, H-2)</span>
-              </div>
-              <div className="flex items-center gap-1.5">
-                <span className="w-1.5 h-1.5 rounded-full bg-orange-500" />
-                <span>Medium (H-4)</span>
-              </div>
-              <div className="flex items-center gap-1.5">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                <span>Low (H-3)</span>
-              </div>
+            <div className="p-2 rounded-lg bg-slate-50 border border-slate-100 flex flex-col">
+              <span className="text-[9px] text-navy-400 uppercase">Shadow Loss</span>
+              <span className="font-bold text-indigo-900">{avgShadow}%</span>
             </div>
           </div>
         </div>
@@ -647,10 +682,11 @@ export default function Reports() {
               </div>
               <button
                 onClick={handleExportPDF}
-                className="mt-3 w-full py-1.5 px-2.5 rounded text-xs font-semibold text-rose-600 border border-rose-200 hover:bg-rose-50 transition-colors flex items-center justify-center gap-1.5 font-mono"
+                className="mt-3 w-full py-1.5 px-2.5 rounded text-xs font-semibold text-rose-600 border border-rose-200 hover:bg-rose-50 transition-colors flex items-center justify-center gap-1.5 font-mono cursor-pointer"
+                title="Opens high-resolution printable survey report in a new browser tab"
               >
-                <Download size={12} />
-                <span>Export PDF</span>
+                <Printer size={13} />
+                <span>Open Printable Dossier (New Tab)</span>
               </button>
             </div>
 
@@ -741,6 +777,115 @@ export default function Reports() {
           <span>Export All Survey Assets (Zip / Bundle)</span>
         </button>
       </div>
+
+      {/* 15-Swath Acoustic Observability Audit Modal */}
+      {showObservabilityAudit && (
+        <div
+          className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-xs flex items-center justify-center p-4 animate-fade-in"
+          onClick={() => setShowObservabilityAudit(false)}
+        >
+          <div
+            className="bg-white rounded-2xl max-w-4xl w-full p-6 shadow-2xl border border-navy-100 flex flex-col max-h-[90vh] overflow-hidden"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Modal Header */}
+            <div className="flex items-center justify-between pb-4 border-b border-navy-50 flex-shrink-0">
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 rounded-xl bg-teal-50 text-teal-600 flex items-center justify-center">
+                  <ShieldCheck size={20} />
+                </div>
+                <div>
+                  <h3 className="text-base font-bold text-navy font-mono">
+                    15-Swath Acoustic Observability & Reliability Audit
+                  </h3>
+                  <p className="text-xs text-navy-400 font-mono">
+                    SIH 26057 Hydrographic Specification • Sector 4B Arabian Sea Survey
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={() => setShowObservabilityAudit(false)}
+                className="p-1.5 rounded-lg text-navy-400 hover:text-navy hover:bg-slate-100 transition-colors cursor-pointer"
+              >
+                <X size={18} />
+              </button>
+            </div>
+
+            {/* Modal Summary Row */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 py-3 border-b border-navy-50 text-xs font-mono bg-slate-50 rounded-xl px-4 my-3">
+              <div>
+                <span className="text-[10px] text-navy-400 block">MEAN RELIABILITY</span>
+                <span className="font-bold text-teal-700 text-sm">{avgReliabilityScore}/100</span>
+              </div>
+              <div>
+                <span className="text-[10px] text-navy-400 block">USABLE SWATH AVG</span>
+                <span className="font-bold text-emerald-700 text-sm">{avgUsableArea}%</span>
+              </div>
+              <div>
+                <span className="text-[10px] text-navy-400 block">MEAN ACOUSTIC SNR</span>
+                <span className="font-bold text-navy text-sm">{avgSnr} dB</span>
+              </div>
+              <div>
+                <span className="text-[10px] text-navy-400 block">QUALITY TIERS</span>
+                <span className="font-bold text-slate-800 text-sm">12 High / 2 Med / 1 Low</span>
+              </div>
+            </div>
+
+            {/* Modal Table */}
+            <div className="flex-1 overflow-y-auto border border-navy-100 rounded-xl">
+              <table className="w-full text-xs text-left">
+                <thead className="bg-slate-100 border-b border-navy-100 text-navy-500 font-mono text-[10px] uppercase sticky top-0">
+                  <tr>
+                    <th className="py-2.5 px-3">#</th>
+                    <th className="py-2.5 px-3">Swath File</th>
+                    <th className="py-2.5 px-2 text-center">Usable Area</th>
+                    <th className="py-2.5 px-2 text-center">SNR (dB)</th>
+                    <th className="py-2.5 px-2 text-center">Quality Tier</th>
+                    <th className="py-2.5 px-2 text-center">Score</th>
+                    <th className="py-2.5 px-3">Propagation & Seabed Remarks</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-navy-50 font-mono text-navy-700">
+                  {obsList.map((m, idx) => (
+                    <tr key={idx} className="hover:bg-slate-50 transition-colors">
+                      <td className="py-2 px-3 font-bold text-navy-400">{m.imageId}</td>
+                      <td className="py-2 px-3 font-bold text-navy">{m.filename}</td>
+                      <td className="py-2 px-2 text-center font-bold text-emerald-700">{m.usableAreaPercent}%</td>
+                      <td className="py-2 px-2 text-center">{m.snrDb.toFixed(1)} dB</td>
+                      <td className="py-2 px-2 text-center">
+                        <span className={`px-2 py-0.5 rounded text-[9px] font-bold ${
+                          m.qualityTier === 'HIGH'
+                            ? 'bg-emerald-100 text-emerald-800'
+                            : m.qualityTier === 'MEDIUM'
+                            ? 'bg-amber-100 text-amber-800'
+                            : 'bg-rose-100 text-rose-800'
+                        }`}>
+                          {m.qualityTier}
+                        </span>
+                      </td>
+                      <td className="py-2 px-2 text-center font-bold text-teal-800">{m.surveyReliabilityScore}</td>
+                      <td className="py-2 px-3 text-[11px] font-sans text-navy-500 max-w-xs truncate" title={m.notes}>
+                        {m.notes}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Modal Footer */}
+            <div className="pt-4 mt-3 border-t border-navy-50 flex items-center justify-between text-xs text-navy-400 font-mono">
+              <span>Acoustic Observability calculated per SIH 26057 System Architecture Section 7</span>
+              <button
+                onClick={() => setShowObservabilityAudit(false)}
+                className="px-5 py-2 bg-navy hover:bg-ocean text-white rounded-lg text-xs font-semibold transition-colors cursor-pointer"
+              >
+                Close Audit
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

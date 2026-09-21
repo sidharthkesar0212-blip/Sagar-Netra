@@ -7,12 +7,14 @@ import EvidenceIntelligence from '@/pages/EvidenceIntelligence';
 import HumanReview from '@/pages/HumanReview';
 import DebrisHotspots from '@/pages/DebrisHotspots';
 import Reports from '@/pages/Reports';
+import MissionReportPrint from '@/pages/MissionReportPrint';
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Landing />} />
+        <Route path="/print-report" element={<MissionReportPrint />} />
         <Route element={<AppLayout />}>
           <Route path="/survey-ingestion" element={<SurveyIngestion />} />
           <Route path="/sonar-analysis" element={<SonarAnalysis />} />

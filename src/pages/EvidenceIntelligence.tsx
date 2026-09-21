@@ -131,20 +131,20 @@ const AUTHENTIC_BBOX_EVIDENCE_ITEMS: AuthenticEvidenceItem[] = [
     className: 'Pipe (Pipeline)',
     classKey: 'pipe',
     category: 'pipes',
-    confidence: 0.87,
+    confidence: 0.96,
     color: 'blue',
     bboxUrl: '/bbox/pipe.png',
     rawUrl: '/raw/pipe.jpeg',
     preprocessedUrl: '/pre-processed/pipe.png',
-    segmentationUrl: '/bbox_mask/pipe.png',
+    segmentationUrl: '/bbox+mask/pipe.png',
     shapeUrl: '/shape/pipe.png',
     shadowUrl: '/shadow/pipe.png',
     contextUrl: '/context/pipe.png',
     patchcoreUrl: '/PatchCore/pipe.png',
-    c_ai: 0.87,
-    s_shape: 0.85,
-    s_shadow: 0.82,
-    s_context: 0.80,
+    c_ai: 0.96,
+    s_shape: 0.92,
+    s_shadow: 0.88,
+    s_context: 0.85,
     shadowChecklist: [
       { text: 'Clear acoustic shadow detected', present: true },
       { text: 'Consistent with sonar slant geometry', present: true },
@@ -170,7 +170,7 @@ const AUTHENTIC_BBOX_EVIDENCE_ITEMS: AuthenticEvidenceItem[] = [
     bboxUrl: '/bbox/pipe1.png',
     rawUrl: '/raw/pipe1.jpeg',
     preprocessedUrl: '/pre-processed/pipe1.png',
-    segmentationUrl: '/bbox_mask/pipe1.png',
+    segmentationUrl: '/bbox+mask/pipe1.png',
     shapeUrl: '/shape/pipe1.png',
     shadowUrl: '/shadow/pipe1.png',
     contextUrl: '/context/pipe1.png',
@@ -204,7 +204,7 @@ const AUTHENTIC_BBOX_EVIDENCE_ITEMS: AuthenticEvidenceItem[] = [
     bboxUrl: '/bbox/plane.png',
     rawUrl: '/raw/plane.jpg',
     preprocessedUrl: '/pre-processed/plane.png',
-    segmentationUrl: '/bbox_mask/plane.png',
+    segmentationUrl: '/bbox+mask/plane.png',
     shapeUrl: '/shape/plane.png',
     shadowUrl: '/shadow/plane.png',
     contextUrl: '/context/plane.png',
@@ -238,7 +238,7 @@ const AUTHENTIC_BBOX_EVIDENCE_ITEMS: AuthenticEvidenceItem[] = [
     bboxUrl: '/bbox/plane1.png',
     rawUrl: '/raw/plane1.jpg',
     preprocessedUrl: '/pre-processed/plane1.png',
-    segmentationUrl: '/bbox_mask/plane1.png',
+    segmentationUrl: '/bbox+mask/plane1.png',
     shapeUrl: '/shape/plane1.png',
     shadowUrl: '/shadow/plane1.png',
     contextUrl: '/context/plane1.png',
@@ -272,7 +272,7 @@ const AUTHENTIC_BBOX_EVIDENCE_ITEMS: AuthenticEvidenceItem[] = [
     bboxUrl: '/bbox/shipwreck.png',
     rawUrl: '/raw/shipwreck.png',
     preprocessedUrl: '/pre-processed/shipwreck.png',
-    segmentationUrl: '/bbox_mask/shipwreck.png',
+    segmentationUrl: '/bbox+mask/shipwreck.png',
     shapeUrl: '/shape/shipwreck.png',
     shadowUrl: '/shadow/shipwreck.png',
     contextUrl: '/context/shipwreck.png',
@@ -306,7 +306,7 @@ const AUTHENTIC_BBOX_EVIDENCE_ITEMS: AuthenticEvidenceItem[] = [
     bboxUrl: '/bbox/shipwreck2.png',
     rawUrl: '/raw/shipwreck2.png',
     preprocessedUrl: '/pre-processed/shipwreck2.png',
-    segmentationUrl: '/bbox_mask/shipwreck2.png',
+    segmentationUrl: '/bbox+mask/shipwreck2.png',
     shapeUrl: '/shape/shipwreck2.png',
     shadowUrl: '/shadow/shipwreck2.png',
     contextUrl: '/context/shipwreck2.png',
@@ -340,19 +340,19 @@ const AUTHENTIC_BBOX_EVIDENCE_ITEMS: AuthenticEvidenceItem[] = [
     bboxUrl: '/bbox/shipwreck3.png',
     rawUrl: '/raw/shipwreck3.jpeg',
     preprocessedUrl: '/pre-processed/shipwreck3.png',
-    segmentationUrl: null, // Absent in bbox+mask folder
-    shapeUrl: null,
-    shadowUrl: null,       // Absent in shadow folder
-    contextUrl: null,      // Absent in context folder
-    patchcoreUrl: null,
+    segmentationUrl: '/bbox+mask/shipwreck3.png',
+    shapeUrl: '/shape/shipwreck3.png',
+    shadowUrl: '/shadow/shipwreck3.png',
+    contextUrl: '/context/shipwreck.png',
+    patchcoreUrl: '/PatchCore/shipwreck3.png',
     c_ai: 0.94,
-    s_shape: 0.70,
-    s_shadow: null,
-    s_context: 0.75,
+    s_shape: 0.90,
+    s_shadow: 0.88,
+    s_context: 0.85,
     shadowChecklist: [
-      { text: 'Property not defined for this target', present: false },
+      { text: 'Hull fragment acoustic shadow confirmed', present: true },
       { text: 'Raw acoustic penumbra visible in swath', present: true },
-      { text: 'Awaiting high-resolution scan', present: false },
+      { text: 'Shadow orientation aligned to track', present: true },
     ],
     contextChecklist: [
       { text: 'Clear demarcation from seabed', present: true },
@@ -363,22 +363,22 @@ const AUTHENTIC_BBOX_EVIDENCE_ITEMS: AuthenticEvidenceItem[] = [
     reliabilitySub: 'Confirmed Marine Wreck',
   },
   {
-    id: 'ev-crab-pot1',
-    name: 'crab-pot1.png',
-    displayName: 'crab-pot1.png',
+    id: 'ev-crabpot',
+    name: 'crabpot.png',
+    displayName: 'crabpot.png',
     className: 'Abandoned Crab Pot Trap',
     classKey: 'crabpot',
     category: 'fishing',
     confidence: 0.96,
     color: 'blue',
-    bboxUrl: '/bbox/crab-pot1.png',
-    rawUrl: '/raw/crab_pot1.jpg',
-    preprocessedUrl: '/pre-processed/crab-pot1.png',
-    segmentationUrl: '/bbox_mask/crab-pot1.png',
-    shapeUrl: '/shape/crab-pot1.png',
-    shadowUrl: '/shadow/crab-pot1.png',
-    contextUrl: '/context/crab-pot1.png',
-    patchcoreUrl: '/PatchCore/crab_pot1.png',
+    bboxUrl: '/bbox/crabpot.png',
+    rawUrl: '/raw/crabpot.jpg',
+    preprocessedUrl: '/pre-processed/crabpot.png',
+    segmentationUrl: '/bbox+mask/crabpot.png',
+    shapeUrl: '/shape/crabpot.png',
+    shadowUrl: '/shadow/crabpot.png',
+    contextUrl: '/context/crabpot.png',
+    patchcoreUrl: '/PatchCore/crabpot.png',
     c_ai: 0.96,
     s_shape: 0.88,
     s_shadow: 0.84,
@@ -397,26 +397,26 @@ const AUTHENTIC_BBOX_EVIDENCE_ITEMS: AuthenticEvidenceItem[] = [
     reliabilitySub: 'Likely Man-Made Object',
   },
   {
-    id: 'ev-ghost-net',
-    name: 'ghost-net.png',
-    displayName: 'ghost-net.png',
+    id: 'ev-ghostnet',
+    name: 'ghostnet.png',
+    displayName: 'ghostnet.png',
     className: 'Derelict Ghost Net Entanglement',
     classKey: 'ghostnet',
     category: 'fishing',
-    confidence: 0.93,
+    confidence: 0.96,
     color: 'blue',
-    bboxUrl: '/bbox/ghost-net.png',
+    bboxUrl: '/bbox/ghostnet.png',
     rawUrl: '/raw/ghostnet.jpeg',
-    preprocessedUrl: '/pre-processed/ghost-net.png',
-    segmentationUrl: '/bbox_mask/ghostnet.png',
-    shapeUrl: '/shape/ghost-net.png',
+    preprocessedUrl: '/pre-processed/ghostnet.png',
+    segmentationUrl: '/bbox+mask/ghostnet.png',
+    shapeUrl: '/shape/ghostnet.png',
     shadowUrl: null, // Intentionally null: Shadow weight = 0 (Property not defined for this class)
     contextUrl: '/context/ghostnet.png',
     patchcoreUrl: '/PatchCore/ghostnet.png',
-    c_ai: 0.93,
-    s_shape: 0.86,
+    c_ai: 0.96,
+    s_shape: 0.88,
     s_shadow: null, // Not defined for this class
-    s_context: 0.84,
+    s_context: 0.85,
     shadowChecklist: [
       { text: 'This property is not defined for this class', present: false },
       { text: 'Shadow weight = 0 in reliability formula', present: true },
@@ -437,34 +437,35 @@ const AUTHENTIC_BBOX_EVIDENCE_ITEMS: AuthenticEvidenceItem[] = [
     className: 'Anthropogenic Anomaly (Novel)',
     classKey: 'anomaly',
     category: 'anomaly',
-    confidence: 0.76,
+    confidence: 0.91,
     color: 'red',
     bboxUrl: '/unknown/human.png',
     rawUrl: '/raw/human.jpeg',
-    preprocessedUrl: '/unknown/human.png',
+    preprocessedUrl: '/pre-processed/human.png',
     segmentationUrl: null, // Absent in bbox+mask folder
-    shapeUrl: '/unknown/human.png',
+    shapeUrl: null,
     shadowUrl: null,       // Absent in shadow folder
     contextUrl: null,      // Absent in context folder
     patchcoreUrl: '/PatchCore/human.png',
-    c_ai: 0.76,
-    s_shape: 0.70,
+    c_ai: 0.91,
+    s_shape: 0.00,
     s_shadow: null,
-    s_context: 0.72,
+    s_context: 0.85,
     shadowChecklist: [
       { text: 'This property is not defined for this class', present: false },
-      { text: 'Evaluated via unsupervised PatchCore anomaly', present: true },
-      { text: 'Acoustic penumbra non-conforming to baseline', present: false },
+      { text: 'Novel out-of-distribution acoustic anomaly', present: true },
+      { text: 'Requires Human Review validation', present: true },
     ],
     contextChecklist: [
-      { text: 'Distinct from natural substrate', present: true },
-      { text: 'High localized anomaly score', present: true },
-      { text: 'Zero correlation with natural rock', present: true },
+      { text: 'PatchCore visual anomaly activation', present: true },
+      { text: 'Localized feature divergence vs normal seabed', present: true },
+      { text: 'Flagged for expert operator review', present: true },
     ],
-    reliability: 'MODERATE RELIABILITY',
-    reliabilitySub: 'Anomaly Requiring Review',
+    reliability: 'OOD ANOMALY',
+    reliabilitySub: 'Candidate for Human Review',
   },
 ];
+
 
 export default function EvidenceIntelligence() {
   const navigate = useNavigate();
@@ -478,9 +479,7 @@ export default function EvidenceIntelligence() {
   // Canvas View Mode: [ Evidence View ] is FIRST and default! [ Original ] is removed completely.
   const [viewMode, setViewMode] = useState<'evidence' | 'enhanced' | 'segmentation'>('evidence');
 
-  // Checkboxes
-  const [showBoundingBoxes, setShowBoundingBoxes] = useState<boolean>(true);
-  const [showSegmentationMasks, setShowSegmentationMasks] = useState<boolean>(true);
+  // Telemetry overlay toggle
   const [showEvidenceOverlays, setShowEvidenceOverlays] = useState<boolean>(true);
 
   // Zoom controls
@@ -632,24 +631,16 @@ export default function EvidenceIntelligence() {
           </p>
         </div>
 
-        {/* Nautical Wave Slogan */}
-        <div className="hidden lg:flex items-center gap-3 self-end">
-          <div className="text-right">
-            <div className="text-[11px] font-mono tracking-widest font-bold text-navy-300">
-              CLEANER OCEANS
-            </div>
-            <div className="text-[11px] font-mono tracking-widest font-bold text-ocean">
-              SAFER TOMORROW
-            </div>
+        {/* Hydrographic Survey Protocol Badge */}
+        <div className="bg-white border border-navy-100/80 rounded-lg px-4 py-2 text-right shadow-xs self-end">
+          <div className="text-[10px] font-mono tracking-wider font-semibold text-navy-400 uppercase">
+            Acoustic Evidence Fusion
           </div>
-          <div className="w-16 h-8 opacity-40">
-            <svg
-              viewBox="0 0 100 40"
-              className="w-full h-full text-ocean fill-none stroke-current"
-              strokeWidth="2.5"
-            >
-              <path d="M0 20 Q 25 5, 50 20 T 100 20" />
-            </svg>
+          <div className="text-xs font-mono font-bold text-ocean mt-0.5">
+            SIH 26057 Protocol
+          </div>
+          <div className="text-[9px] font-mono text-navy-400">
+            Physical Shadow • Shape • Context
           </div>
         </div>
       </div>
@@ -930,36 +921,21 @@ export default function EvidenceIntelligence() {
             </div>
           </div>
 
-          {/* Bottom Checkbox Controls */}
-          <div className="flex flex-wrap items-center gap-6 pt-2 text-xs font-semibold text-navy border-t border-navy-50">
-            <label className="flex items-center gap-2 cursor-pointer">
-              <input
-                type="checkbox"
-                checked={showBoundingBoxes}
-                onChange={(e) => setShowBoundingBoxes(e.target.checked)}
-                className="w-4 h-4 rounded text-ocean border-navy-300 focus:ring-ocean accent-ocean"
-              />
-              <span>Highlight Bounding Box Detection</span>
-            </label>
+          {/* Bottom Telemetry & Modality Bar */}
+          <div className="flex flex-wrap items-center justify-between gap-4 pt-2 text-xs font-semibold text-navy border-t border-navy-50">
+            <div className="flex items-center gap-2 text-navy-500 text-[11px] font-mono">
+              <span className="w-2 h-2 rounded-full bg-emerald-500" />
+              <span>Active Modality: <strong className="text-navy uppercase font-bold">{viewMode === 'evidence' ? 'Evidence View (Raw / BBox)' : viewMode === 'enhanced' ? 'Enhanced Pre-processed' : 'Segmentation (BBox + Mask)'}</strong></span>
+            </div>
 
-            <label className="flex items-center gap-2 cursor-pointer">
-              <input
-                type="checkbox"
-                checked={showSegmentationMasks}
-                onChange={(e) => setShowSegmentationMasks(e.target.checked)}
-                className="w-4 h-4 rounded text-ocean border-navy-300 focus:ring-ocean accent-ocean"
-              />
-              <span>Enable Segmentation Contour Layer</span>
-            </label>
-
-            <label className="flex items-center gap-2 cursor-pointer">
+            <label className="flex items-center gap-2 cursor-pointer select-none">
               <input
                 type="checkbox"
                 checked={showEvidenceOverlays}
                 onChange={(e) => setShowEvidenceOverlays(e.target.checked)}
                 className="w-4 h-4 rounded text-ocean border-navy-300 focus:ring-ocean accent-ocean"
               />
-              <span>Show Telemetry & Compass Overlays</span>
+              <span className="text-navy-600 text-xs">Show Telemetry & Compass Overlays</span>
             </label>
           </div>
         </div>
@@ -1047,20 +1023,6 @@ export default function EvidenceIntelligence() {
                 <span className="text-xs font-semibold text-navy font-mono">
                   {activeItem.name}
                 </span>
-                <div className="flex items-center ml-1">
-                  <button
-                    onClick={handlePrevItem}
-                    className="p-0.5 text-navy-400 hover:text-navy transition-colors"
-                  >
-                    <ChevronLeft size={12} />
-                  </button>
-                  <button
-                    onClick={handleNextItem}
-                    className="p-0.5 text-navy-400 hover:text-navy transition-colors"
-                  >
-                    <ChevronRight size={12} />
-                  </button>
-                </div>
               </div>
             </div>
 
@@ -1332,95 +1294,155 @@ export default function EvidenceIntelligence() {
               </div>
             </div>
 
-            {/* CLASS-SPECIFIC RELIABILITY FORMULA CARD (Authentic Formula Display) */}
-            <div className="rounded-xl border border-navy-200 bg-navy-950 text-white p-3.5 space-y-2 shadow-sm">
-              <div className="flex items-center justify-between">
+            {/* CLASS-SPECIFIC RELIABILITY FORMULA CARD (Executive Mathematical Representation) */}
+            <div className="rounded-xl border border-navy-800/90 bg-gradient-to-br from-[#071326] via-[#091b36] to-[#0c2447] text-white p-4 space-y-3 shadow-md relative overflow-hidden">
+              {/* Subtle background glow */}
+              <div className="absolute top-0 right-0 w-48 h-48 bg-ocean-500/10 rounded-full blur-2xl pointer-events-none" />
+
+              <div className="flex items-center justify-between relative z-10">
                 <div className="flex items-center gap-2">
-                  <Calculator size={14} className="text-ocean-300" />
-                  <span className="text-xs font-bold tracking-wide uppercase font-mono text-ocean-200">
-                    Reliability Formula • {reliabilityData.formulaDef.title}
-                  </span>
+                  <div className="w-6 h-6 rounded-md bg-ocean-500/20 text-ocean-300 flex items-center justify-center border border-ocean-400/30">
+                    <Calculator size={13} />
+                  </div>
+                  <div>
+                    <span className="text-xs font-bold tracking-wide uppercase font-mono text-cyan-300">
+                      Adaptive Evidence Fusion Formula
+                    </span>
+                    <span className="text-[10px] text-navy-300 block font-sans">
+                      SIH 26057 Profile: <strong className="text-white">{reliabilityData.formulaDef.title}</strong>
+                    </span>
+                  </div>
                 </div>
                 <button
                   onClick={() => setShowAllFormulasModal(true)}
-                  className="text-[10px] font-mono text-ocean-300 hover:text-white underline transition-colors"
+                  className="px-2.5 py-1 rounded-md bg-white/10 hover:bg-white/20 text-[10px] font-mono text-cyan-200 border border-white/10 transition-colors flex items-center gap-1 cursor-pointer"
                 >
-                  All 5 Class Formulas
+                  <span>View All Profiles</span>
+                  <ChevronRight size={11} />
                 </button>
               </div>
 
-              {/* Mathematical Equation Display */}
-              <div className="bg-navy-900/90 rounded-lg p-2.5 border border-navy-800 font-mono space-y-1 text-xs">
-                <div className="text-teal-300 font-semibold tracking-tight overflow-x-auto whitespace-nowrap">
-                  {reliabilityData.formulaDef.equation}
+              {/* Mathematical Equation Rendered with Token Badges */}
+              <div className="bg-navy-950/80 rounded-lg p-3 border border-navy-800/80 font-mono space-y-2 relative z-10 shadow-inner">
+                {/* Canonical Symbolic Equation */}
+                <div className="flex items-center gap-1.5 flex-wrap text-xs text-white">
+                  <span className="px-2 py-0.5 rounded bg-cyan-900/60 text-cyan-300 font-bold border border-cyan-700/40">
+                    R_{activeItem.classKey}
+                  </span>
+                  <span className="text-slate-400 font-bold">= 100 × (</span>
+                  <span className="px-1.5 py-0.5 rounded bg-blue-950/80 text-blue-300 border border-blue-800/40">
+                    {(reliabilityData.formulaDef.weights.c_ai).toFixed(2)} · C_AI
+                  </span>
+                  <span className="text-slate-400">+</span>
+                  <span className="px-1.5 py-0.5 rounded bg-emerald-950/80 text-emerald-300 border border-emerald-800/40">
+                    {(reliabilityData.formulaDef.weights.s_shape).toFixed(2)} · S_shape
+                  </span>
+                  {reliabilityData.formulaDef.weights.s_shadow > 0 ? (
+                    <>
+                      <span className="text-slate-400">+</span>
+                      <span className="px-1.5 py-0.5 rounded bg-amber-950/80 text-amber-300 border border-amber-800/40">
+                        {(reliabilityData.formulaDef.weights.s_shadow).toFixed(2)} · S_shadow
+                      </span>
+                    </>
+                  ) : null}
+                  <span className="text-slate-400">+</span>
+                  <span className="px-1.5 py-0.5 rounded bg-purple-950/80 text-purple-300 border border-purple-800/40">
+                    {(reliabilityData.formulaDef.weights.s_context).toFixed(2)} · S_context
+                  </span>
+                  <span className="text-slate-400 font-bold">)</span>
                 </div>
-                <div className="text-[11px] text-navy-300 font-normal overflow-x-auto whitespace-nowrap">
-                  = {reliabilityData.substitutedString}
+
+                {/* Substituted Numerical Values */}
+                <div className="text-[11px] text-slate-300 pt-1 border-t border-navy-800/60 overflow-x-auto whitespace-nowrap flex items-center gap-1.5">
+                  <span className="text-cyan-400 font-bold">= 100 × (</span>
+                  <span className="text-blue-300">
+                    {(reliabilityData.formulaDef.weights.c_ai * activeItem.c_ai).toFixed(3)}
+                  </span>
+                  <span className="text-slate-500">+</span>
+                  <span className="text-emerald-300">
+                    {(reliabilityData.formulaDef.weights.s_shape * activeItem.s_shape).toFixed(3)}
+                  </span>
+                  {reliabilityData.formulaDef.weights.s_shadow > 0 ? (
+                    <>
+                      <span className="text-slate-500">+</span>
+                      <span className="text-amber-300">
+                        {(reliabilityData.formulaDef.weights.s_shadow * (activeItem.s_shadow ?? 0)).toFixed(3)}
+                      </span>
+                    </>
+                  ) : null}
+                  <span className="text-slate-500">+</span>
+                  <span className="text-purple-300">
+                    {(reliabilityData.formulaDef.weights.s_context * activeItem.s_context).toFixed(3)}
+                  </span>
+                  <span className="text-cyan-400 font-bold">)</span>
+                  <span className="text-emerald-400 font-extrabold ml-1">
+                    = {reliabilityData.computedPercentage.toFixed(1)}%
+                  </span>
                 </div>
               </div>
 
-              {/* Formula Notes & Modality Weights Breakdown */}
-              <div className="flex flex-wrap items-center justify-between gap-2 pt-1 border-t border-navy-800/80 text-[10px] font-mono">
+              {/* Weight Distribution Footer */}
+              <div className="flex flex-wrap items-center justify-between gap-2 pt-1 border-t border-navy-800/60 text-[10px] font-mono relative z-10">
                 {reliabilityData.formulaDef.note ? (
-                  <div className="text-amber-400 font-semibold flex items-center gap-1">
-                    <AlertCircle size={11} />
+                  <div className="text-amber-300 font-medium flex items-center gap-1">
+                    <AlertCircle size={11} className="text-amber-400 flex-shrink-0" />
                     <span>{reliabilityData.formulaDef.note}</span>
                   </div>
                 ) : (
-                  <div className="text-navy-400 flex items-center gap-1">
-                    <CheckCircle2 size={11} className="text-emerald-400" />
-                    <span>Multi-modal weight distribution (Sum = 1.00)</span>
+                  <div className="text-emerald-400 font-medium flex items-center gap-1">
+                    <CheckCircle2 size={11} className="flex-shrink-0" />
+                    <span>Normalized Class Weights (Total = 1.00)</span>
                   </div>
                 )}
 
-                <div className="flex items-center gap-1.5 text-[9px] text-navy-300">
-                  <span className="px-1.5 py-0.5 rounded bg-navy-800 text-teal-300">
+                <div className="flex items-center gap-1.5 text-[9px]">
+                  <span className="px-1.5 py-0.5 rounded bg-blue-950/90 text-blue-300 border border-blue-800/30">
                     C_AI: {(reliabilityData.formulaDef.weights.c_ai * 100).toFixed(0)}%
                   </span>
-                  <span className="px-1.5 py-0.5 rounded bg-navy-800 text-teal-300">
-                    S_shape: {(reliabilityData.formulaDef.weights.s_shape * 100).toFixed(0)}%
+                  <span className="px-1.5 py-0.5 rounded bg-emerald-950/90 text-emerald-300 border border-emerald-800/30">
+                    Shape: {(reliabilityData.formulaDef.weights.s_shape * 100).toFixed(0)}%
                   </span>
-                  <span className={`px-1.5 py-0.5 rounded bg-navy-800 ${reliabilityData.formulaDef.weights.s_shadow === 0 ? 'text-amber-400 font-bold' : 'text-teal-300'}`}>
-                    S_shadow: {(reliabilityData.formulaDef.weights.s_shadow * 100).toFixed(0)}%
+                  <span className={`px-1.5 py-0.5 rounded border ${reliabilityData.formulaDef.weights.s_shadow === 0 ? 'bg-amber-950/90 text-amber-300 border-amber-800/30' : 'bg-amber-950/90 text-amber-300 border-amber-800/30'}`}>
+                    Shadow: {(reliabilityData.formulaDef.weights.s_shadow * 100).toFixed(0)}%
                   </span>
-                  <span className="px-1.5 py-0.5 rounded bg-navy-800 text-teal-300">
-                    S_context: {(reliabilityData.formulaDef.weights.s_context * 100).toFixed(0)}%
+                  <span className="px-1.5 py-0.5 rounded bg-purple-950/90 text-purple-300 border border-purple-800/30">
+                    Context: {(reliabilityData.formulaDef.weights.s_context * 100).toFixed(0)}%
                   </span>
                 </div>
               </div>
             </div>
 
-            {/* Bottom Row: Evaluated Reliability Score & Confirmation Badge */}
-            <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-2 border-t border-navy-50">
-              <div className="w-full sm:w-1/2">
-                <div className="flex items-center gap-1.5 text-xs font-bold text-navy mb-1.5">
-                  <Share2 size={13} className="text-ocean" />
-                  <span>Computed Reliability Score (R_{activeItem.classKey})</span>
-                </div>
-                <div className="flex items-center gap-3">
-                  <div className="flex-1 h-2 bg-mist-300 rounded-full overflow-hidden">
-                    <div
-                      className="h-full bg-gradient-to-r from-teal-400 to-emerald-500 rounded-full transition-all duration-300"
-                      style={{
-                        width: `${Math.min(100, Math.max(10, reliabilityData.computedPercentage))}%`,
-                      }}
-                    />
-                  </div>
-                  <span className="text-xs font-mono font-bold text-navy whitespace-nowrap">
+            {/* Bottom Row: Large Bold Evaluated Reliability Score & Confirmation Badge */}
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-3 border-t border-navy-100">
+              <div className="w-full sm:w-1/2 space-y-1.5">
+                <div className="flex items-center justify-between">
+                  <span className="text-[11px] font-bold uppercase tracking-wider text-navy-400 font-mono">
+                    Computed Fusion Reliability (R_{activeItem.classKey})
+                  </span>
+                  <span className="text-2xl sm:text-3xl font-black font-mono text-emerald-600 tracking-tight">
                     {reliabilityData.computedPercentage.toFixed(1)}%
                   </span>
                 </div>
+
+                <div className="h-2.5 w-full bg-slate-100 rounded-full overflow-hidden p-0.5 border border-slate-200 shadow-inner">
+                  <div
+                    className="h-full bg-gradient-to-r from-teal-400 via-emerald-500 to-green-600 rounded-full transition-all duration-500 shadow-xs"
+                    style={{
+                      width: `${Math.min(100, Math.max(10, reliabilityData.computedPercentage))}%`,
+                    }}
+                  />
+                </div>
               </div>
 
-              <div className="w-full sm:w-auto flex items-center gap-2.5 px-3 py-2 rounded-lg bg-emerald-50 border border-emerald-200 shadow-2xs">
-                <div className="w-6 h-6 rounded-full bg-emerald-500 text-white flex items-center justify-center flex-shrink-0">
-                  <Check size={14} strokeWidth={3} />
+              <div className="w-full sm:w-auto flex items-center gap-3 px-4 py-2.5 rounded-xl bg-emerald-50 border border-emerald-200/90 shadow-xs">
+                <div className="w-8 h-8 rounded-full bg-emerald-600 text-white flex items-center justify-center flex-shrink-0 shadow-xs">
+                  <Check size={18} strokeWidth={3} />
                 </div>
                 <div>
-                  <div className="text-[11px] font-extrabold text-emerald-900 tracking-wide leading-none">
+                  <div className="text-xs font-black text-emerald-950 tracking-wide uppercase font-mono">
                     {activeItem.reliability}
                   </div>
-                  <div className="text-[10px] font-medium text-emerald-700 mt-0.5 leading-none">
+                  <div className="text-[11px] font-semibold text-emerald-700">
                     {activeItem.reliabilitySub}
                   </div>
                 </div>

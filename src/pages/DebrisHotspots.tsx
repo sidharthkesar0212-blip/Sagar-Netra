@@ -360,6 +360,9 @@ export default function DebrisHotspots() {
                       <img
                         src={item.bboxUrl || item.rawUrl}
                         alt={item.label}
+                        onError={(e) => {
+                          (e.currentTarget as HTMLImageElement).src = item.rawUrl;
+                        }}
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform"
                       />
 
@@ -404,6 +407,77 @@ export default function DebrisHotspots() {
           <ArrowRight size={16} />
         </button>
       </div>
+
+      {/* Inspection Modal Lightbox */}
+      {inspectingItem && (
+        <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-xs flex items-center justify-center p-4 animate-fade-in">
+          <div className="bg-white rounded-2xl max-w-2xl w-full p-6 shadow-2xl border border-navy-100 flex flex-col gap-4">
+            {/* Modal Header */}
+            <div className="flex items-center justify-between pb-3 border-b border-navy-50">
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-lg bg-ocean-50 text-ocean flex items-center justify-center">
+                  <Target size={18} strokeWidth={2} />
+                </div>
+                <div>
+                  <h3 className="text-base font-bold text-navy font-mono">
+                    {inspectingItem.className || inspectingItem.label}
+                  </h3>
+                  <p className="text-xs text-navy-400 font-mono">
+                    Cluster {activeHotspot.code} • {activeHotspot.priority} Priority • Conf: {(inspectingItem.confidence * 100).toFixed(0)}%
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={() => setInspectingItem(null)}
+                className="p-1.5 rounded-lg text-navy-400 hover:text-navy hover:bg-slate-100 transition-colors cursor-pointer"
+              >
+                <X size={18} />
+              </button>
+            </div>
+
+            {/* Modal Image Display */}
+            <div className="relative rounded-xl overflow-hidden bg-slate-950 aspect-[16/9] flex items-center justify-center border border-navy-100">
+              <img
+                src={inspectingItem.bboxUrl || inspectingItem.rawUrl}
+                alt={inspectingItem.label}
+                onError={(e) => {
+                  (e.currentTarget as HTMLImageElement).src = inspectingItem.rawUrl;
+                }}
+                className="w-full h-full object-contain select-none"
+              />
+              <div className="absolute bottom-2 left-2 px-2 py-0.5 rounded bg-black/70 backdrop-blur-xs text-[10px] font-mono text-cyan-300 border border-cyan-500/30">
+                {inspectingItem.bboxUrl ? 'Acoustic Signature with Bounding Box' : 'Raw Sonar Swath'}
+              </div>
+            </div>
+
+            {/* Modal Metadata Grid */}
+            <div className="grid grid-cols-3 gap-3 bg-slate-50 p-3 rounded-xl border border-navy-50 text-xs font-mono">
+              <div>
+                <span className="text-navy-400 text-[10px] block">TARGET CLASS</span>
+                <span className="font-bold text-navy">{inspectingItem.className}</span>
+              </div>
+              <div>
+                <span className="text-navy-400 text-[10px] block">CONFIDENCE</span>
+                <span className="font-bold text-emerald-600">{(inspectingItem.confidence * 100).toFixed(1)}%</span>
+              </div>
+              <div>
+                <span className="text-navy-400 text-[10px] block">LOCATION</span>
+                <span className="font-semibold text-navy">{activeHotspot.location}</span>
+              </div>
+            </div>
+
+            {/* Modal Footer */}
+            <div className="flex justify-end pt-2">
+              <button
+                onClick={() => setInspectingItem(null)}
+                className="px-5 py-2 bg-navy hover:bg-ocean text-white rounded-lg text-xs font-semibold transition-colors cursor-pointer"
+              >
+                Close Inspection
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

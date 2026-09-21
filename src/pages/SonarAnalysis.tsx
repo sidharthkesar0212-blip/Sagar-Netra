@@ -114,7 +114,7 @@ export default function SonarAnalysis() {
       case 'original':
         return activeFrame.rawUrl;
       case 'enhanced':
-        return null; // Enhanced model outputs reserved
+        return activeFrame.preprocessedUrl || activeFrame.enhancedUrl || null;
       case 'segmented':
         return activeFrame.segmentationUrl;
       case 'heatmap':
@@ -461,26 +461,39 @@ export default function SonarAnalysis() {
                 </>
               )}
 
-              {/* Section 2: Enhanced (Placeholder as model output is reserved) */}
+              {/* Section 2: Enhanced (Authentic Pre-Processed Acoustic Scan) */}
               {processedTab === 'enhanced' && (
-                <div className="relative w-full h-full flex items-center justify-center">
-                  <img
-                    src={activeFrame.rawUrl}
-                    alt="Enhanced space preview"
-                    className="w-full h-full object-cover select-none opacity-30 filter contrast-125"
-                  />
-                  <div className="absolute inset-0 bg-slate-950/70 backdrop-blur-2xs flex flex-col items-center justify-center p-3 text-center">
-                    <div className="w-7 h-7 rounded-full bg-ocean-500/20 text-ocean-300 flex items-center justify-center mb-1">
-                      <Sparkles size={14} />
+                (activeFrame.preprocessedUrl || activeFrame.enhancedUrl) ? (
+                  <>
+                    <img
+                      src={(activeFrame.preprocessedUrl || activeFrame.enhancedUrl)!}
+                      alt="Enhanced pre-processed acoustic scan"
+                      className="w-full h-full object-cover select-none"
+                    />
+                    <div className="absolute bottom-2 left-2 px-2 py-0.5 rounded bg-black/70 backdrop-blur-xs text-[9px] font-mono text-cyan-300 border border-cyan-500/30">
+                      Pre-Processed • Contrast & Bilateral Enhanced
                     </div>
-                    <span className="text-xs font-semibold text-white font-mono">
-                      Enhanced Imagery Space
-                    </span>
-                    <span className="text-[10px] text-ocean-200 mt-0.5">
-                      Super-resolution & despeckling model output reserved
-                    </span>
+                  </>
+                ) : (
+                  <div className="relative w-full h-full flex items-center justify-center">
+                    <img
+                      src={activeFrame.rawUrl}
+                      alt="Enhanced space preview"
+                      className="w-full h-full object-cover select-none opacity-30 filter contrast-125"
+                    />
+                    <div className="absolute inset-0 bg-slate-950/70 backdrop-blur-2xs flex flex-col items-center justify-center p-3 text-center">
+                      <div className="w-7 h-7 rounded-full bg-ocean-500/20 text-ocean-300 flex items-center justify-center mb-1">
+                        <Sparkles size={14} />
+                      </div>
+                      <span className="text-xs font-semibold text-white font-mono">
+                        Enhanced Imagery Space
+                      </span>
+                      <span className="text-[10px] text-ocean-200 mt-0.5">
+                        Super-resolution & despeckling model output reserved
+                      </span>
+                    </div>
                   </div>
-                </div>
+                )
               )}
 
               {/* Section 3: Segmented (Authentic Mask or Placeholder) */}
