@@ -25,6 +25,8 @@ import {
   INITIAL_REVIEW_CANDIDATES,
   ReviewCandidate,
 } from '@/data/surveyWorkflowData';
+import { usePipeline } from '@/context/PipelineContext';
+import LayerEmptyState from '@/components/LayerEmptyState';
 
 type ReviewViewMode = 'raw' | 'heatmap' | 'bbox';
 
@@ -32,6 +34,8 @@ const STORAGE_KEY = 'sagar_human_review_candidates_v4';
 
 export default function HumanReview() {
   const navigate = useNavigate();
+  const { pipelineState } = usePipeline();
+  const isProcessed = pipelineState !== 'idle';
 
   // Load human review candidate (strictly human.png and its corresponding images)
   const [candidates, setCandidates] = useState<ReviewCandidate[]>(() => {
@@ -115,6 +119,36 @@ export default function HumanReview() {
   };
 
   const isReviewed = activeCandidate.decision !== null && activeCandidate.decision !== undefined;
+
+  if (!isProcessed) {
+    return (
+      <div className="p-6 md:p-8 max-w-[1560px] mx-auto space-y-6 select-none">
+        {/* Top Header Section */}
+        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 pb-2 border-b border-navy-100/60">
+          <div>
+            <div className="text-[11px] font-bold tracking-widest text-ocean font-mono mb-0.5">
+              STEP 04 / 06
+            </div>
+            <h1 className="text-2xl md:text-3xl font-bold text-navy tracking-tight">
+              Human Review
+            </h1>
+            <p className="text-sm text-navy-400 max-w-3xl mt-1">
+              Expert human-in-the-loop inspection of novel acoustic anomalies and out-of-distribution detections identified by the unsupervised PatchCore engine.
+            </p>
+          </div>
+        </div>
+
+        <LayerEmptyState
+          layerNumber="04"
+          layerName="Human Review"
+          title="Human Verification Queue Empty"
+          description="No flagged anomaly targets available for review. Ingest survey data in Layer 01 and execute the processing pipeline to populate the review triage."
+          Icon={CheckSquare}
+          hint="Unsupervised novel anomaly activations (ANO-001) will populate this verification queue once processed."
+        />
+      </div>
+    );
+  }
 
   return (
     <div className="p-6 md:p-8 max-w-[1560px] mx-auto space-y-6 select-none">

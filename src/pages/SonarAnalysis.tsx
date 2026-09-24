@@ -27,11 +27,15 @@ import {
   resolveSonarAsset,
 } from '@/data/sonarAnalysisData';
 import { IngestedImage } from '@/types';
+import { usePipeline } from '@/context/PipelineContext';
+import LayerEmptyState from '@/components/LayerEmptyState';
 
 type ProcessedTabType = 'original' | 'enhanced' | 'segmented' | 'heatmap';
 
 export default function SonarAnalysis() {
   const navigate = useNavigate();
+  const { pipelineState } = usePipeline();
+  const isProcessed = pipelineState !== 'idle';
 
   // Frames state
   const [frames, setFrames] = useState<SonarAnalysisAsset[]>(DEFAULT_SONAR_ANALYSIS_ASSETS);
@@ -126,6 +130,29 @@ export default function SonarAnalysis() {
 
   const currentSectionUrl = getSectionImageUrl(processedTab);
   const modalSectionUrl = expandedSection ? getSectionImageUrl(expandedSection) : null;
+
+  if (!isProcessed) {
+    return (
+      <div className="p-8 max-w-7xl">
+        {/* Header Bar */}
+        <PageHeader
+          step="STEP 02"
+          total="06"
+          title="Sonar Analysis"
+          subtitle="Preprocess the sonar images and detect known objects and novel anomalies using AI."
+        />
+
+        <LayerEmptyState
+          layerNumber="02"
+          layerName="Sonar Analysis"
+          title="No Sonar Analysis Data Ingested"
+          description="Acoustic waterfall contrast enhancement and PatchCore candidate segmentation require survey ingestion. Please upload your survey dataset in Layer 01 and click Ingest to run the processing pipeline."
+          Icon={Layers}
+          hint="Dual-waterfall contrast, PatchCore anomaly activations, and bounded targets will be rendered here once ingested."
+        />
+      </div>
+    );
+  }
 
   return (
     <div className="p-8 max-w-7xl">

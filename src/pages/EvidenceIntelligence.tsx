@@ -27,6 +27,8 @@ import {
   Layers,
   HelpCircle,
 } from 'lucide-react';
+import { usePipeline } from '@/context/PipelineContext';
+import LayerEmptyState from '@/components/LayerEmptyState';
 
 export interface ClassFormulaDefinition {
   classKey: 'plane' | 'shipwreck' | 'pipe' | 'ghostnet' | 'crabpot' | 'anomaly';
@@ -469,6 +471,8 @@ const AUTHENTIC_BBOX_EVIDENCE_ITEMS: AuthenticEvidenceItem[] = [
 
 export default function EvidenceIntelligence() {
   const navigate = useNavigate();
+  const { pipelineState } = usePipeline();
+  const isProcessed = pipelineState !== 'idle';
 
   // Category filter state for the top toolbar
   const [categoryFilter, setCategoryFilter] = useState<'all' | 'pipes' | 'wrecks' | 'fishing' | 'anomaly'>('all');
@@ -481,6 +485,7 @@ export default function EvidenceIntelligence() {
 
   // Telemetry overlay toggle
   const [showEvidenceOverlays, setShowEvidenceOverlays] = useState<boolean>(true);
+  const [showBoundingBoxes, setShowBoundingBoxes] = useState<boolean>(true);
 
   // Zoom controls
   const [zoomLevel, setZoomLevel] = useState<number>(1);
@@ -596,9 +601,8 @@ export default function EvidenceIntelligence() {
           placeholderDesc: `No segmentation mask defined for "${activeItem.name}".`,
         };
       case 'evidence':
-      default:
         // Evidence View directly renders authentic bbox image
-        if (showBoundingBoxes && activeItem.bboxUrl) {
+        if (activeItem.bboxUrl) {
           return {
             url: activeItem.bboxUrl,
             placeholderTitle: 'This property is not defined for this class',
@@ -614,6 +618,49 @@ export default function EvidenceIntelligence() {
   };
 
   const canvasDisplay = getCanvasSource();
+
+  if (!isProcessed) {
+    return (
+      <div className="p-6 md:p-8 max-w-[1600px] mx-auto space-y-5 select-none">
+        {/* Top Header Section */}
+        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 pb-2 border-b border-navy-100/60 relative">
+          <div>
+            <div className="text-[11px] font-bold tracking-widest text-ocean font-mono mb-0.5">
+              STEP 03 / 06
+            </div>
+            <h1 className="text-2xl md:text-3xl font-bold text-navy tracking-tight">
+              Evidence Intelligence
+            </h1>
+            <p className="text-sm text-navy-400 max-w-3xl mt-1">
+              Deep multi-modal verification using acoustic shadow, segmentation masks, and contextual evidence to confirm authentic debris.
+            </p>
+          </div>
+
+          {/* Hydrographic Survey Protocol Badge */}
+          <div className="bg-white border border-navy-100/80 rounded-lg px-4 py-2 text-right shadow-xs self-end">
+            <div className="text-[10px] font-mono tracking-wider font-semibold text-navy-400 uppercase">
+              Acoustic Evidence Fusion
+            </div>
+            <div className="text-xs font-mono font-bold text-ocean mt-0.5">
+              SIH 26057 Protocol
+            </div>
+            <div className="text-[9px] font-mono text-navy-400">
+              Physical Shadow • Shape • Context
+            </div>
+          </div>
+        </div>
+
+        <LayerEmptyState
+          layerNumber="03"
+          layerName="Evidence Intelligence"
+          title="Multi-Modal Physical Evidence Not Available"
+          description="Acoustic shadow geometry, shape regularity, and contextual divergence calculations require survey ingestion. Please upload your survey dataset in Layer 01 and click Ingest to run the processing pipeline."
+          Icon={ShieldCheck}
+          hint="Shadow (88.5%), Shape (91.9%), Context (88.8%), and physical reliability breakdown will unlock upon pipeline execution."
+        />
+      </div>
+    );
+  }
 
   return (
     <div className="p-6 md:p-8 max-w-[1600px] mx-auto space-y-5 select-none">

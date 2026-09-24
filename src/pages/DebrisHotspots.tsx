@@ -22,9 +22,13 @@ import {
   HotspotDetectionPreview,
 } from '@/data/surveyWorkflowData';
 import DebrisHotspotMap from '@/components/DebrisHotspotMap';
+import { usePipeline } from '@/context/PipelineContext';
+import LayerEmptyState from '@/components/LayerEmptyState';
 
 export default function DebrisHotspots() {
   const navigate = useNavigate();
+  const { pipelineState } = usePipeline();
+  const isProcessed = pipelineState !== 'idle';
 
   const [hotspots] = useState<HotspotItem[]>(SURVEY_HOTSPOTS);
   const [selectedHotspotId, setSelectedHotspotId] = useState<string>('h-1');
@@ -147,7 +151,7 @@ export default function DebrisHotspots() {
                 Total Detections
               </div>
               <div className="text-xl font-bold text-navy leading-none mt-0.5">
-                {totalDetections}
+                {isProcessed ? totalDetections : '—'}
               </div>
             </div>
           </div>
@@ -162,7 +166,7 @@ export default function DebrisHotspots() {
                 Hotspots Identified
               </div>
               <div className="text-xl font-bold text-navy leading-none mt-0.5">
-                {hotspots.length} Clusters
+                {isProcessed ? `${hotspots.length} Clusters` : '—'}
               </div>
             </div>
           </div>
@@ -177,15 +181,26 @@ export default function DebrisHotspots() {
                 High Priority
               </div>
               <div className="text-xl font-bold text-rose-600 leading-none mt-0.5">
-                {highPriorityCount} Zones
+                {isProcessed ? `${highPriorityCount} Zones` : '—'}
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Main Grid: Left Hotspot Map (7 cols) + Right Summary & Preview (5 cols) */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+      {!isProcessed ? (
+        <LayerEmptyState
+          layerNumber="05"
+          layerName="Debris Hotspots"
+          title="Spatial Hotspot Clusters Not Computed"
+          description="DBSCAN density clustering and priority hazard classification require processed sonar anomalies from the ingestion pipeline. Please upload your survey dataset in Layer 01 and click Ingest to run the processing pipeline."
+          Icon={MapIcon}
+          hint="4 spatial clusters (H-1 to H-4) and georeferenced boundary polygons will be computed upon execution."
+        />
+      ) : (
+        <>
+          {/* Main Grid: Left Hotspot Map (7 cols) + Right Summary & Preview (5 cols) */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* Left Container: Hotspot Map */}
         <div className="lg:col-span-7 bg-white border border-navy-100/80 rounded-xl overflow-hidden shadow-xs flex flex-col">
           {/* Map Header */}
@@ -407,6 +422,8 @@ export default function DebrisHotspots() {
           <ArrowRight size={16} />
         </button>
       </div>
+      </>
+      )}
 
       {/* Inspection Modal Lightbox */}
       {inspectingItem && (

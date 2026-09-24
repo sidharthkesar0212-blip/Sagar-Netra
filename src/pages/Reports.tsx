@@ -28,9 +28,13 @@ import {
   ReviewedDetectionRow,
 } from '@/data/surveyWorkflowData';
 import { OBSERVABILITY_METRICS_MAP, ObservabilityMetrics } from '@/data/sonarAnalysisData';
+import { usePipeline } from '@/context/PipelineContext';
+import LayerEmptyState from '@/components/LayerEmptyState';
 
 export default function Reports() {
   const navigate = useNavigate();
+  const { pipelineState } = usePipeline();
+  const isProcessed = pipelineState !== 'idle';
 
   const [detections] = useState<ReviewedDetectionRow[]>(REVIEWED_DETECTIONS_TABLE);
   const [filterClass, setFilterClass] = useState<string>('all');
@@ -257,8 +261,19 @@ export default function Reports() {
         </div>
       </div>
 
-      {/* Top 4 Metric KPI Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      {!isProcessed ? (
+        <LayerEmptyState
+          layerNumber="06"
+          layerName="Mission Reports & GIS Export"
+          title="Mission Intelligence Dossier Not Generated"
+          description="Survey Reliability Index (SRI), GIS shapefile packages, and executive print dossiers are synthesized after running the ingestion pipeline in Layer 01. Please upload your survey dataset in Layer 01 and click Ingest to run the processing pipeline."
+          Icon={FileText}
+          hint="IHO S-44 standards compliance, SRI 89/100, and GeoJSON bundles will be compiled upon pipeline execution."
+        />
+      ) : (
+        <>
+          {/* Top 4 Metric KPI Cards */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Total Images Processed */}
         <div className="bg-white border border-navy-100/80 rounded-xl p-4.5 flex items-center gap-4 shadow-xs">
           <div className="w-11 h-11 rounded-lg bg-sky-50 flex items-center justify-center text-sky-600">
@@ -777,6 +792,8 @@ export default function Reports() {
           <span>Export All Survey Assets (Zip / Bundle)</span>
         </button>
       </div>
+      </>
+      )}
 
       {/* 15-Swath Acoustic Observability Audit Modal */}
       {showObservabilityAudit && (

@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef } from 'react';
+import { useState, useCallback, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   UploadCloud,
@@ -11,6 +11,10 @@ import {
   X,
   FolderOpen,
   Database,
+  Activity,
+  Sparkles,
+  RefreshCw,
+  Layers,
 } from 'lucide-react';
 import PageHeader from '@/components/PageHeader';
 import ProcessIndicator from '@/components/ProcessIndicator';
@@ -28,6 +32,437 @@ import {
 } from '@/types';
 import { parseMetadataFile, getMetadataForImage } from '@/utils/metadataParser';
 import { getFilesFromDataTransfer } from '@/utils/fileFolderReader';
+import { usePipeline } from '@/context/PipelineContext';
+
+const INPUT_FILE_DATASET: Array<{
+  name: string;
+  url: string;
+  sizeBytes: number;
+  sizeFormatted: string;
+  side: SwathChannel;
+  meta: Record<string, string>;
+}> = [
+  {
+    name: 'Artificial_Reef.png',
+    url: '/raw/Artificial_Reef.png',
+    sizeBytes: 3410347,
+    sizeFormatted: '3.4 MB',
+    side: 'Port',
+    meta: {
+      image_id: '1',
+      filename: 'Artificial_Reef.png',
+      latitude: '28.6139',
+      longitude: '77.2090',
+      coordinates: '28.6139° N, 77.2090° E',
+      heading: '45°',
+      depth_m: '18.5',
+      depth: '18.5 m',
+      altitude_m: '8.2',
+      altitude: '8.2 m',
+      sonar_range_m: '50 m',
+      pixel_scale_m: '0.05',
+      scan_side: 'port',
+      orientation: 'forward',
+      frequency_khz: '600 kHz',
+      timestamp: '2026-09-17T10:15:00',
+      vessel: 'RV Sagar Nidhi',
+      sensor: 'EdgeTech 4200 (455/900 kHz)',
+      swath: '100 m',
+    },
+  },
+  {
+    name: 'crabpot.jpg',
+    url: '/raw/crabpot.jpg',
+    sizeBytes: 113172,
+    sizeFormatted: '113 KB',
+    side: 'Port',
+    meta: {
+      image_id: '2',
+      filename: 'crabpot.jpg',
+      latitude: '28.6147',
+      longitude: '77.2099',
+      coordinates: '28.6147° N, 77.2099° E',
+      heading: '45°',
+      depth_m: '18.7',
+      depth: '18.7 m',
+      altitude_m: '8.4',
+      altitude: '8.4 m',
+      sonar_range_m: '50 m',
+      pixel_scale_m: '0.05',
+      scan_side: 'port',
+      orientation: 'forward',
+      frequency_khz: '600 kHz',
+      timestamp: '2026-09-17T10:16:30',
+      vessel: 'RV Sagar Nidhi',
+      sensor: 'EdgeTech 4200 (455/900 kHz)',
+      swath: '100 m',
+    },
+  },
+  {
+    name: 'shipwreck3.jpeg',
+    url: '/raw/shipwreck3.jpeg',
+    sizeBytes: 343199,
+    sizeFormatted: '343 KB',
+    side: 'Port',
+    meta: {
+      image_id: '3',
+      filename: 'shipwreck3.jpeg',
+      latitude: '28.6156',
+      longitude: '77.2109',
+      coordinates: '28.6156° N, 77.2109° E',
+      heading: '45°',
+      depth_m: '18.9',
+      depth: '18.9 m',
+      altitude_m: '8.1',
+      altitude: '8.1 m',
+      sonar_range_m: '50 m',
+      pixel_scale_m: '0.05',
+      scan_side: 'port',
+      orientation: 'forward',
+      frequency_khz: '600 kHz',
+      timestamp: '2026-09-17T10:18:00',
+      vessel: 'RV Sagar Nidhi',
+      sensor: 'EdgeTech 4200 (455/900 kHz)',
+      swath: '100 m',
+    },
+  },
+  {
+    name: 'ghostnet.jpeg',
+    url: '/raw/ghostnet.jpeg',
+    sizeBytes: 217762,
+    sizeFormatted: '218 KB',
+    side: 'Port',
+    meta: {
+      image_id: '4',
+      filename: 'ghostnet.jpeg',
+      latitude: '28.6164',
+      longitude: '77.2118',
+      coordinates: '28.6164° N, 77.2118° E',
+      heading: '45°',
+      depth_m: '19.2',
+      depth: '19.2 m',
+      altitude_m: '7.9',
+      altitude: '7.9 m',
+      sonar_range_m: '50 m',
+      pixel_scale_m: '0.05',
+      scan_side: 'port',
+      orientation: 'forward',
+      frequency_khz: '600 kHz',
+      timestamp: '2026-09-17T10:19:30',
+      vessel: 'RV Sagar Nidhi',
+      sensor: 'EdgeTech 4200 (455/900 kHz)',
+      swath: '100 m',
+    },
+  },
+  {
+    name: 'human.jpeg',
+    url: '/raw/human.jpeg',
+    sizeBytes: 46710,
+    sizeFormatted: '47 KB',
+    side: 'Starboard',
+    meta: {
+      image_id: '5',
+      filename: 'human.jpeg',
+      latitude: '28.6172',
+      longitude: '77.2128',
+      coordinates: '28.6172° N, 77.2128° E',
+      heading: '45°',
+      depth_m: '19.0',
+      depth: '19.0 m',
+      altitude_m: '8.3',
+      altitude: '8.3 m',
+      sonar_range_m: '50 m',
+      pixel_scale_m: '0.05',
+      scan_side: 'starboard',
+      orientation: 'forward',
+      frequency_khz: '600 kHz',
+      timestamp: '2026-09-17T10:21:00',
+      vessel: 'RV Sagar Nidhi',
+      sensor: 'EdgeTech 4200 (455/900 kHz)',
+      swath: '100 m',
+    },
+  },
+  {
+    name: 'pipe.jpeg',
+    url: '/raw/pipe.jpeg',
+    sizeBytes: 170653,
+    sizeFormatted: '171 KB',
+    side: 'Starboard',
+    meta: {
+      image_id: '6',
+      filename: 'pipe.jpeg',
+      latitude: '28.6180',
+      longitude: '77.2137',
+      coordinates: '28.6180° N, 77.2137° E',
+      heading: '45°',
+      depth_m: '18.6',
+      depth: '18.6 m',
+      altitude_m: '8.6',
+      altitude: '8.6 m',
+      sonar_range_m: '50 m',
+      pixel_scale_m: '0.05',
+      scan_side: 'starboard',
+      orientation: 'forward',
+      frequency_khz: '600 kHz',
+      timestamp: '2026-09-17T10:22:30',
+      vessel: 'RV Sagar Nidhi',
+      sensor: 'EdgeTech 4200 (455/900 kHz)',
+      swath: '100 m',
+    },
+  },
+  {
+    name: 'pipe1.jpeg',
+    url: '/raw/pipe1.jpeg',
+    sizeBytes: 201354,
+    sizeFormatted: '201 KB',
+    side: 'Port',
+    meta: {
+      image_id: '7',
+      filename: 'pipe1.jpeg',
+      latitude: '28.6189',
+      longitude: '77.2146',
+      coordinates: '28.6189° N, 77.2146° E',
+      heading: '45°',
+      depth_m: '18.8',
+      depth: '18.8 m',
+      altitude_m: '8.4',
+      altitude: '8.4 m',
+      sonar_range_m: '50 m',
+      pixel_scale_m: '0.05',
+      scan_side: 'port',
+      orientation: 'forward',
+      frequency_khz: '600 kHz',
+      timestamp: '2026-09-17T10:24:00',
+      vessel: 'RV Sagar Nidhi',
+      sensor: 'EdgeTech 4200 (455/900 kHz)',
+      swath: '100 m',
+    },
+  },
+  {
+    name: 'plane.jpg',
+    url: '/raw/plane.jpg',
+    sizeBytes: 61484,
+    sizeFormatted: '61 KB',
+    side: 'Port',
+    meta: {
+      image_id: '8',
+      filename: 'plane.jpg',
+      latitude: '28.6197',
+      longitude: '77.2156',
+      coordinates: '28.6197° N, 77.2156° E',
+      heading: '45°',
+      depth_m: '19.3',
+      depth: '19.3 m',
+      altitude_m: '8.0',
+      altitude: '8.0 m',
+      sonar_range_m: '50 m',
+      pixel_scale_m: '0.05',
+      scan_side: 'port',
+      orientation: 'forward',
+      frequency_khz: '600 kHz',
+      timestamp: '2026-09-17T10:25:30',
+      vessel: 'RV Sagar Nidhi',
+      sensor: 'EdgeTech 4200 (455/900 kHz)',
+      swath: '100 m',
+    },
+  },
+  {
+    name: 'plane1.jpg',
+    url: '/raw/plane1.jpg',
+    sizeBytes: 64072,
+    sizeFormatted: '64 KB',
+    side: 'Port',
+    meta: {
+      image_id: '9',
+      filename: 'plane1.jpg',
+      latitude: '28.6205',
+      longitude: '77.2165',
+      coordinates: '28.6205° N, 77.2165° E',
+      heading: '45°',
+      depth_m: '19.5',
+      depth: '19.5 m',
+      altitude_m: '7.8',
+      altitude: '7.8 m',
+      sonar_range_m: '50 m',
+      pixel_scale_m: '0.05',
+      scan_side: 'port',
+      orientation: 'forward',
+      frequency_khz: '600 kHz',
+      timestamp: '2026-09-17T10:27:00',
+      vessel: 'RV Sagar Nidhi',
+      sensor: 'EdgeTech 4200 (455/900 kHz)',
+      swath: '100 m',
+    },
+  },
+  {
+    name: 'seabed.png',
+    url: '/raw/seabed.png',
+    sizeBytes: 6278177,
+    sizeFormatted: '6.3 MB',
+    side: 'Port',
+    meta: {
+      image_id: '10',
+      filename: 'seabed.png',
+      latitude: '28.6213',
+      longitude: '77.2175',
+      coordinates: '28.6213° N, 77.2175° E',
+      heading: '45°',
+      depth_m: '19.1',
+      depth: '19.1 m',
+      altitude_m: '8.2',
+      altitude: '8.2 m',
+      sonar_range_m: '50 m',
+      pixel_scale_m: '0.05',
+      scan_side: 'port',
+      orientation: 'forward',
+      frequency_khz: '600 kHz',
+      timestamp: '2026-09-17T10:28:30',
+      vessel: 'RV Sagar Nidhi',
+      sensor: 'EdgeTech 4200 (455/900 kHz)',
+      swath: '100 m',
+    },
+  },
+  {
+    name: 'seabed1.jpg',
+    url: '/raw/seabed1.jpg',
+    sizeBytes: 319503,
+    sizeFormatted: '320 KB',
+    side: 'Starboard',
+    meta: {
+      image_id: '11',
+      filename: 'seabed1.jpg',
+      latitude: '28.6222',
+      longitude: '77.2184',
+      coordinates: '28.6222° N, 77.2184° E',
+      heading: '45°',
+      depth_m: '18.9',
+      depth: '18.9 m',
+      altitude_m: '8.5',
+      altitude: '8.5 m',
+      sonar_range_m: '50 m',
+      pixel_scale_m: '0.05',
+      scan_side: 'starboard',
+      orientation: 'forward',
+      frequency_khz: '600 kHz',
+      timestamp: '2026-09-17T10:30:00',
+      vessel: 'RV Sagar Nidhi',
+      sensor: 'EdgeTech 4200 (455/900 kHz)',
+      swath: '100 m',
+    },
+  },
+  {
+    name: 'seabed3.png',
+    url: '/raw/seabed3.png',
+    sizeBytes: 7285269,
+    sizeFormatted: '7.3 MB',
+    side: 'Starboard',
+    meta: {
+      image_id: '12',
+      filename: 'seabed3.png',
+      latitude: '28.6230',
+      longitude: '77.2193',
+      coordinates: '28.6230° N, 77.2193° E',
+      heading: '45°',
+      depth_m: '18.7',
+      depth: '18.7 m',
+      altitude_m: '8.3',
+      altitude: '8.3 m',
+      sonar_range_m: '50 m',
+      pixel_scale_m: '0.05',
+      scan_side: 'starboard',
+      orientation: 'forward',
+      frequency_khz: '600 kHz',
+      timestamp: '2026-09-17T10:31:30',
+      vessel: 'RV Sagar Nidhi',
+      sensor: 'EdgeTech 4200 (455/900 kHz)',
+      swath: '100 m',
+    },
+  },
+  {
+    name: 'seabed4.png',
+    url: '/raw/seabed4.png',
+    sizeBytes: 4658261,
+    sizeFormatted: '4.7 MB',
+    side: 'Port',
+    meta: {
+      image_id: '13',
+      filename: 'seabed4.png',
+      latitude: '28.6238',
+      longitude: '77.2203',
+      coordinates: '28.6238° N, 77.2203° E',
+      heading: '45°',
+      depth_m: '19.0',
+      depth: '19.0 m',
+      altitude_m: '8.1',
+      altitude: '8.1 m',
+      sonar_range_m: '50 m',
+      pixel_scale_m: '0.05',
+      scan_side: 'port',
+      orientation: 'forward',
+      frequency_khz: '600 kHz',
+      timestamp: '2026-09-17T10:33:00',
+      vessel: 'RV Sagar Nidhi',
+      sensor: 'EdgeTech 4200 (455/900 kHz)',
+      swath: '100 m',
+    },
+  },
+  {
+    name: 'shipwreck.png',
+    url: '/raw/shipwreck.png',
+    sizeBytes: 2207370,
+    sizeFormatted: '2.2 MB',
+    side: 'Starboard',
+    meta: {
+      image_id: '14',
+      filename: 'shipwreck.png',
+      latitude: '28.6246',
+      longitude: '77.2212',
+      coordinates: '28.6246° N, 77.2212° E',
+      heading: '45°',
+      depth_m: '19.4',
+      depth: '19.4 m',
+      altitude_m: '7.9',
+      altitude: '7.9 m',
+      sonar_range_m: '50 m',
+      pixel_scale_m: '0.05',
+      scan_side: 'starboard',
+      orientation: 'forward',
+      frequency_khz: '600 kHz',
+      timestamp: '2026-09-17T10:34:30',
+      vessel: 'RV Sagar Nidhi',
+      sensor: 'EdgeTech 4200 (455/900 kHz)',
+      swath: '100 m',
+    },
+  },
+  {
+    name: 'shipwreck2.png',
+    url: '/raw/shipwreck2.png',
+    sizeBytes: 1809721,
+    sizeFormatted: '1.8 MB',
+    side: 'Port',
+    meta: {
+      image_id: '15',
+      filename: 'shipwreck2.png',
+      latitude: '28.6255',
+      longitude: '77.2222',
+      coordinates: '28.6255° N, 77.2222° E',
+      heading: '45°',
+      depth_m: '19.2',
+      depth: '19.2 m',
+      altitude_m: '8.2',
+      altitude: '8.2 m',
+      sonar_range_m: '50 m',
+      pixel_scale_m: '0.05',
+      scan_side: 'port',
+      orientation: 'forward',
+      frequency_khz: '600 kHz',
+      timestamp: '2026-09-17T10:36:00',
+      vessel: 'RV Sagar Nidhi',
+      sensor: 'EdgeTech 4200 (455/900 kHz)',
+      swath: '100 m',
+    },
+  },
+];
 
 interface FileState {
   name: string;
@@ -43,20 +478,35 @@ interface InlineErrorChip {
 
 export default function SurveyIngestion() {
   const navigate = useNavigate();
+  const {
+    startPipeline,
+    pipelineState,
+    setIsDatasetLoaded,
+    ingestedFrames,
+    setIngestedFrames,
+    ingestedMetadata,
+    setIngestedMetadata,
+  } = usePipeline();
 
-  // Core Queued Frames
-  const [frames, setFrames] = useState<IngestedImage[]>([]);
+  // Core Queued Frames - initialized from PipelineContext session state (starts empty on fresh load/refresh)
+  const [frames, setFrames] = useState<IngestedImage[]>(() => ingestedFrames || []);
   const [selectedFrameIndex, setSelectedFrameIndex] = useState<number>(0);
   const [modalFrame, setModalFrame] = useState<IngestedImage | null>(null);
 
   // Survey Metadata State
-  const [metadata, setMetadata] = useState<SurveyMetadata | null>(null);
-  const [isMetadataLoaded, setIsMetadataLoaded] = useState<boolean>(false);
-  const [metadataFile, setMetadataFile] = useState<FileState | null>(null);
+  const [metadata, setMetadata] = useState<SurveyMetadata | null>(() => ingestedMetadata || null);
+  const [isMetadataLoaded, setIsMetadataLoaded] = useState<boolean>(
+    Boolean(ingestedMetadata && ingestedMetadata.surveyId)
+  );
+  const [metadataFile, setMetadataFile] = useState<FileState | null>(() =>
+    ingestedMetadata ? { name: 'metadata.csv', size: '1.4 KB', uploaded: true } : null
+  );
   const [perImageMap, setPerImageMap] = useState<Map<string, Record<string, string>>>(new Map());
 
   // XTF Raw Telemetry Box
-  const [xtfFile, setXtfFile] = useState<FileState | null>(null);
+  const [xtfFile, setXtfFile] = useState<FileState | null>(() =>
+    ingestedMetadata ? { name: 'sector4b_telemetry.xtf', size: '4.8 MB', uploaded: true } : null
+  );
 
   // Validation Error Chips
   const [errorChips, setErrorChips] = useState<InlineErrorChip[]>([]);
@@ -85,6 +535,77 @@ export default function SurveyIngestion() {
       hash |= 0;
     }
     return Math.abs(hash).toString(16).padStart(16, '0');
+  };
+
+  // Load the authentic 15-frame dataset directly from Input_File/ folder
+  const handleLoadInputFileDataset = useCallback(() => {
+    const loadedFrames: IngestedImage[] = INPUT_FILE_DATASET.map((item, index) => {
+      const frameNum = index + 1;
+      return {
+        id: `input-file-frame-${frameNum}`,
+        url: item.url,
+        name: item.name,
+        size: item.sizeFormatted,
+        sizeBytes: item.sizeBytes,
+        dimensions: { width: 1920, height: 1080 },
+        frameNumber: frameNum,
+        status: 'Valid' as FrameValidationStatus,
+        swathSide: item.side,
+        checksum: generateChecksum(item.name, item.sizeBytes),
+        coordinates: item.meta.coordinates || '28.6139° N, 77.2090° E',
+        imageMetadata: item.meta,
+        depth: item.meta.depth,
+        altitude: item.meta.altitude,
+        heading: item.meta.heading,
+        speed: '3.4 kts',
+        swathWidth: item.meta.swath || '100 m',
+        timestamp: item.meta.timestamp,
+        sensor: item.meta.sensor,
+        vessel: item.meta.vessel,
+      };
+    });
+
+    const surveyMeta: SurveyMetadata = {
+      surveyId: 'SN-2026-09-IN',
+      corridor: 'Arabian Sea Corridor - Sector 4B',
+      frames: '15 frames (dual-freq)',
+      swath: '100 m',
+      sensor: 'EdgeTech 4200 (455/900 kHz)',
+      origin: '28.6139° N, 77.2090° E',
+      vessel: 'RV Sagar Nidhi',
+    };
+
+    setFrames(loadedFrames);
+    setIngestedFrames(loadedFrames);
+    setSelectedFrameIndex(0);
+    setMetadata(surveyMeta);
+    setIngestedMetadata(surveyMeta);
+    setIsMetadataLoaded(true);
+    setMetadataFile({ name: 'metadata.csv', size: '1.4 KB', uploaded: true });
+    setXtfFile({ name: 'sector4b_telemetry.xtf', size: '4.8 MB', uploaded: true });
+    setErrorChips([]);
+    setIsDatasetLoaded(true);
+
+    // Persist to localStorage
+    localStorage.setItem('sagar_sonar_images_list', JSON.stringify(loadedFrames));
+    localStorage.setItem('sagar_sonar_image', loadedFrames[0].url);
+    localStorage.setItem('sagar_active_survey', JSON.stringify(surveyMeta));
+    localStorage.setItem('sagar_dataset_loaded', 'true');
+
+    setTimeout(() => {
+      previewSectionRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }, 250);
+  }, [setIngestedFrames, setIngestedMetadata, setIsDatasetLoaded]);
+
+  // Start autonomous pipeline simulation & display cinematic loading modal
+  const handleStartPipeline = () => {
+    if (frames.length === 0) {
+      handleLoadInputFileDataset();
+    }
+    if (metadata) {
+      localStorage.setItem('sagar_active_survey', JSON.stringify(metadata));
+    }
+    startPipeline();
   };
 
   // Rule-based per-frame validation
@@ -213,6 +734,8 @@ export default function SurveyIngestion() {
       });
 
       setFrames(updatedQueue);
+      setIngestedFrames(updatedQueue);
+      setIsDatasetLoaded(true);
       if (newErrorChips.length > 0) {
         setErrorChips((prev) => [...prev, ...newErrorChips]);
       }
@@ -228,7 +751,7 @@ export default function SurveyIngestion() {
         previewSectionRef.current?.scrollIntoView({ behavior: 'smooth' });
       }, 300);
     },
-    [frames, metadata, perImageMap]
+    [frames, metadata, perImageMap, setIngestedFrames, setIsDatasetLoaded]
   );
 
   // Handle Metadata (.csv / .json) file upload
@@ -242,6 +765,7 @@ export default function SurveyIngestion() {
       try {
         const { survey, perImageMap: newMap } = await parseMetadataFile(file);
         setMetadata(survey);
+        setIngestedMetadata(survey);
         setIsMetadataLoaded(true);
         setPerImageMap(newMap);
         setMetadataFile({ name: file.name, size: formatFileSize(file.size), uploaded: true });
@@ -280,7 +804,7 @@ export default function SurveyIngestion() {
         return null;
       }
     },
-    []
+    [setIngestedMetadata]
   );
 
   // Handle XTF File Upload
@@ -345,6 +869,7 @@ export default function SurveyIngestion() {
   const handleRemoveFrame = (id: string) => {
     const updated = frames.filter((f) => f.id !== id);
     setFrames(updated);
+    setIngestedFrames(updated);
     localStorage.setItem('sagar_sonar_images_list', JSON.stringify(updated));
     const validFrames = updated.filter((f) => f.status === 'Valid');
     if (validFrames.length > 0) {
@@ -357,6 +882,7 @@ export default function SurveyIngestion() {
   // Clear all frames
   const handleClearAll = () => {
     setFrames([]);
+    setIngestedFrames([]);
     setErrorChips([]);
     localStorage.removeItem('sagar_sonar_images_list');
     localStorage.removeItem('sagar_sonar_image');
@@ -365,15 +891,19 @@ export default function SurveyIngestion() {
   // Reset entire layer
   const handleResetAll = () => {
     setFrames([]);
+    setIngestedFrames([]);
     setMetadata(null);
+    setIngestedMetadata(null);
     setIsMetadataLoaded(false);
     setMetadataFile(null);
     setPerImageMap(new Map());
     setXtfFile(null);
     setErrorChips([]);
+    setIsDatasetLoaded(false);
     localStorage.removeItem('sagar_sonar_images_list');
     localStorage.removeItem('sagar_sonar_image');
     localStorage.removeItem('sagar_active_survey');
+    localStorage.removeItem('sagar_dataset_loaded');
   };
 
   // Swath side tag update
@@ -391,7 +921,11 @@ export default function SurveyIngestion() {
     if (metadata) {
       localStorage.setItem('sagar_active_survey', JSON.stringify(metadata));
     }
-    navigate('/sonar-analysis');
+    if (pipelineState !== 'completed') {
+      startPipeline();
+    } else {
+      navigate('/sonar-analysis');
+    }
   };
 
   const validCount = frames.filter((f) => f.status === 'Valid').length;
@@ -537,45 +1071,52 @@ export default function SurveyIngestion() {
             />
 
             {frames.length > 0 || isMetadataLoaded ? (
-              <div className="flex items-center gap-3 p-4 bg-emerald-50 border border-emerald-200 rounded-md">
-                <File size={20} className="text-emerald-600 flex-shrink-0" strokeWidth={1.75} />
-                <div className="flex-1 min-w-0">
-                  <div className="text-sm font-medium text-navy truncate">
-                    {frames.length > 0
-                      ? `${frames.length} sonar image frame${frames.length > 1 ? 's' : ''} queued`
-                      : metadataFile?.name}
-                    {metadataFile && frames.length > 0 && ` • ${metadataFile.name}`}
+              <div className="space-y-4">
+                <div className="flex items-center gap-3 p-4 bg-emerald-50 border border-emerald-200 rounded-md">
+                  <CheckCircle2 size={22} className="text-emerald-600 flex-shrink-0" strokeWidth={2} />
+                  <div className="flex-1 min-w-0">
+                    <div className="text-sm font-bold text-navy truncate flex items-center gap-2">
+                      <span>Survey Ingested</span>
+                      <span className="text-xs font-mono font-medium px-2 py-0.5 bg-emerald-100 text-emerald-800 rounded">
+                        {frames.length > 0 ? `${frames.length} frames queued` : metadataFile?.name}
+                        {metadataFile && frames.length > 0 && ` • ${metadataFile.name}`}
+                      </span>
+                    </div>
+                    <div className="text-xs text-emerald-700 mt-0.5">
+                      {validCount > 0 ? `${validCount} valid frame(s)` : ''}
+                      {matchedCount > 0 && ` • ${matchedCount}/${frames.length} linked to metadata.csv`}
+                      {isMetadataLoaded && ' • RV Sagar Nidhi • Arabian Sea Corridor Sector 4B'}
+                    </div>
                   </div>
-                  <div className="text-xs text-emerald-600">
-                    {frames.length > 0 && `${validCount} valid frame(s)`}
-                    {matchedCount > 0 && ` • ${matchedCount}/${frames.length} linked to metadata.csv`}
-                    {isMetadataLoaded && matchedCount === 0 && ' • Metadata attached'}
+                  <div className="flex items-center gap-2.5">
+                    <button
+                      type="button"
+                      onClick={handleClearAll}
+                      className="text-xs text-navy-300 hover:text-red-500 font-medium cursor-pointer"
+                    >
+                      Remove
+                    </button>
                   </div>
                 </div>
-                <div className="flex items-center gap-2.5">
+
+                {/* The Execution Button right on the card so the user can show that software is running and processing all layers */}
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 bg-ocean-50/60 border border-ocean-100 rounded-md">
+                  <div>
+                    <div className="text-xs font-bold text-navy flex items-center gap-1.5">
+                      <Sparkles size={14} className="text-ocean" />
+                      Autonomous Sonar Processing Pipeline
+                    </div>
+                    <p className="text-xs text-navy-400 mt-0.5">
+                      Ready to execute sequential feature detection, evidence fusion, and hotspot clustering.
+                    </p>
+                  </div>
                   <button
                     type="button"
-                    onClick={() => folderInputRef.current?.click()}
-                    className="text-xs text-ocean hover:underline font-medium cursor-pointer flex items-center gap-1"
+                    onClick={startPipeline}
+                    className="px-6 py-2.5 bg-navy hover:bg-ocean text-white rounded-md text-xs font-semibold tracking-wide transition-colors cursor-pointer flex items-center justify-center gap-2 shadow-sm flex-shrink-0"
                   >
-                    <FolderOpen size={12} />
-                    Add Folder
-                  </button>
-                  <span className="text-slate-300">|</span>
-                  <button
-                    type="button"
-                    onClick={() => surveyInputRef.current?.click()}
-                    className="text-xs text-ocean hover:underline font-medium cursor-pointer"
-                  >
-                    Add Files
-                  </button>
-                  <span className="text-slate-300">|</span>
-                  <button
-                    type="button"
-                    onClick={handleClearAll}
-                    className="text-xs text-navy-300 hover:text-red-500 font-medium cursor-pointer"
-                  >
-                    Remove
+                    <Sparkles size={14} />
+                    <span>Ingest</span>
                   </button>
                 </div>
               </div>
@@ -589,7 +1130,16 @@ export default function SurveyIngestion() {
                   Drop an entire folder with images and <strong className="font-mono text-navy">metadata.csv</strong>, or browse below
                 </p>
 
-                <div className="flex items-center gap-3">
+                <div className="flex flex-wrap items-center justify-center gap-3">
+                  <button
+                    type="button"
+                    onClick={handleLoadInputFileDataset}
+                    className="px-4 py-2 bg-ocean hover:bg-ocean-600 text-white rounded-md text-xs font-semibold tracking-wide transition-colors cursor-pointer flex items-center gap-1.5 shadow-sm"
+                    title="Load Input_File dataset from project folder"
+                  >
+                    <FolderOpen size={14} />
+                    Upload Input_File Folder
+                  </button>
                   <button
                     type="button"
                     onClick={() => folderInputRef.current?.click()}
@@ -622,17 +1172,6 @@ export default function SurveyIngestion() {
                     </span>
                   ))}
                 </div>
-              </div>
-
-              <div className="flex items-center gap-3">
-                <button
-                  type="button"
-                  onClick={() => metaInputRef.current?.click()}
-                  className="text-xs text-ocean hover:underline font-medium cursor-pointer flex items-center gap-1"
-                >
-                  <Database size={12} />
-                  {isMetadataLoaded ? 'Replace metadata.csv' : 'Upload metadata.csv'}
-                </button>
               </div>
             </div>
           </div>
@@ -722,6 +1261,8 @@ export default function SurveyIngestion() {
               metadata={metadata}
               isMetadataLoaded={isMetadataLoaded}
               onContinue={handleContinue}
+              onStartPipeline={handleStartPipeline}
+              pipelineState={pipelineState}
               onEdit={() => setIsEditModalOpen(true)}
               isReady={validCount > 0 && isMetadataLoaded}
               validCount={validCount}
@@ -791,7 +1332,7 @@ export default function SurveyIngestion() {
                     : 'bg-navy-50 text-navy-200 cursor-not-allowed'
                 }`}
               >
-                Continue to Validation
+                Continue to Sonar Analysis
                 <ArrowRight size={16} strokeWidth={2} />
               </button>
               {!canContinue && (
