@@ -568,7 +568,7 @@ export default function SurveyIngestion() {
     const surveyMeta: SurveyMetadata = {
       surveyId: 'SN-2026-09-IN',
       corridor: 'Arabian Sea Corridor - Sector 4B',
-      frames: '15 frames (dual-freq)',
+      frames: 15,
       swath: '100 m',
       sensor: 'EdgeTech 4200 (455/900 kHz)',
       origin: '28.6139° N, 77.2090° E',
@@ -591,10 +591,6 @@ export default function SurveyIngestion() {
     localStorage.setItem('sagar_sonar_image', loadedFrames[0].url);
     localStorage.setItem('sagar_active_survey', JSON.stringify(surveyMeta));
     localStorage.setItem('sagar_dataset_loaded', 'true');
-
-    setTimeout(() => {
-      previewSectionRef.current?.scrollIntoView({ behavior: 'smooth' });
-    }, 250);
   }, [setIngestedFrames, setIngestedMetadata, setIsDatasetLoaded]);
 
   // Start autonomous pipeline simulation & display cinematic loading modal
@@ -746,10 +742,6 @@ export default function SurveyIngestion() {
       if (validFrames.length > 0) {
         localStorage.setItem('sagar_sonar_image', validFrames[0].url);
       }
-
-      setTimeout(() => {
-        previewSectionRef.current?.scrollIntoView({ behavior: 'smooth' });
-      }, 300);
     },
     [frames, metadata, perImageMap, setIngestedFrames, setIsDatasetLoaded]
   );
