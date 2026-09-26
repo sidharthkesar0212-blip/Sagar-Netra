@@ -170,19 +170,11 @@ export default function FrameDetailModal({
               style={{ transform: `scale(${zoomLevel})` }}
               className={`max-w-full max-h-full object-contain transition-transform duration-200 ${filterStyles[filterMode]}`}
             />
-            {/* Center Nadir Line - Rendered strictly for Dual-channel / full-swath frames */}
-            {(frame.swathSide === 'Dual-channel' ||
-              frame.name.toLowerCase().includes('seabed') ||
-              frame.name.toLowerCase().includes('swath') ||
-              (frame.imageMetadata?.scan_side &&
-                frame.imageMetadata.scan_side.toLowerCase().includes('dual'))) && (
-              <>
-                <div className="absolute top-0 bottom-0 left-1/2 w-px bg-cyan-400/40 border-r border-dashed border-cyan-300/60 pointer-events-none" />
-                <div className="absolute bottom-2 left-3 px-2 py-0.5 rounded bg-black/70 backdrop-blur-xs text-[10px] font-mono text-cyan-200">
-                  Channel: {frame.swathSide} • Nadir center track
-                </div>
-              </>
-            )}
+            {/* Center Nadir Line */}
+            <div className="absolute top-0 bottom-0 left-1/2 w-px bg-cyan-400/40 border-r border-dashed border-cyan-300/60 pointer-events-none" />
+            <div className="absolute bottom-2 left-3 px-2 py-0.5 rounded bg-black/70 backdrop-blur-xs text-[10px] font-mono text-cyan-200">
+              Channel: {frame.swathSide} • Nadir center track
+            </div>
           </div>
 
           {/* Ingested Metadata Table from metadata.csv */}
