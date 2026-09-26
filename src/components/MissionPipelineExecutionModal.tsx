@@ -32,14 +32,33 @@ export default function MissionPipelineExecutionModal() {
   const [logFilter, setLogFilter] = useState<'all' | 'process' | 'success' | 'warn'>('all');
   const [copiedLogs, setCopiedLogs] = useState(false);
 
-  const terminalEndRef = useRef<HTMLDivElement>(null);
+  const logBoxRef = useRef<HTMLDivElement>(null);
+  const modalBodyRef = useRef<HTMLDivElement>(null);
 
-  // Auto-scroll execution activity log to bottom as new events arrive
+  // Ensure modal starts at top so Survey Processing Status (Image 2) is visible first
   useEffect(() => {
-    if (terminalEndRef.current) {
-      terminalEndRef.current.scrollIntoView({ behavior: 'smooth' });
+    if (isModalOpen && modalBodyRef.current) {
+      modalBodyRef.current.scrollTop = 0;
+    }
+  }, [isModalOpen]);
+
+  // Auto-scroll ONLY the internal log container, never scrolling the outer modal window
+  useEffect(() => {
+    if (logBoxRef.current) {
+      logBoxRef.current.scrollTop = logBoxRef.current.scrollHeight;
     }
   }, [logs, logFilter]);
+
+  // Support closing modal with Escape key
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isModalOpen) {
+        setIsModalOpen(false);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isModalOpen, setIsModalOpen]);
 
   if (!isModalOpen) return null;
 
@@ -70,8 +89,18 @@ export default function MissionPipelineExecutionModal() {
   });
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs animate-fade-in select-none font-sans">
-      <div className="relative w-full max-w-5xl bg-white border border-slate-300 rounded-sm shadow-xl flex flex-col max-h-[92vh] overflow-hidden">
+    <div
+      onClick={(e) => {
+        if (e.target === e.currentTarget && isCompleted) {
+          setIsModalOpen(false);
+        }
+      }}
+      className="fixed inset-0 z-[9999] flex items-center justify-center p-3 sm:p-5 bg-slate-900/60 backdrop-blur-xs animate-fade-in select-none font-sans"
+    >
+      <div
+        onClick={(e) => e.stopPropagation()}
+        className="relative w-full max-w-6xl bg-white border border-slate-300 rounded-sm shadow-2xl flex flex-col max-h-[90vh] overflow-hidden"
+      >
         
         {/* Institutional Government / Scientific Portal Header */}
         <div className="relative px-6 py-3.5 bg-[#082B52] text-white border-b border-[#051c37] flex items-center justify-between z-10">
@@ -125,7 +154,7 @@ export default function MissionPipelineExecutionModal() {
         </div>
 
         {/* Modal Body */}
-        <div className="relative flex-1 overflow-y-auto p-6 bg-[#f8fafc] space-y-5 z-10 scrollbar-thin">
+        <div ref={modalBodyRef} className="relative flex-1 overflow-y-auto p-6 bg-[#f8fafc] space-y-5 z-10 scrollbar-thin">
           
           {/* Section 1: Survey Processing Status (Full Width) */}
           <div className="p-4 bg-white border border-slate-300 rounded-sm shadow-xs space-y-4">
@@ -157,14 +186,22 @@ export default function MissionPipelineExecutionModal() {
                 <div className="p-2.5 bg-slate-50 border border-slate-200 rounded-xs">
                   <div className="text-[10px] font-semibold text-[#64748B] uppercase">Frames Processed</div>
                   <div className="mt-1 font-bold text-[#082B52]">
-                    15 / 15 Frames
+                    {isCompleted ? '15 / 15 Frames' : `${Math.min(15, Math.max(1, Math.round(((currentStageIndex + 1) / 6) * 15)))} / 15 Frames`}
                   </div>
                 </div>
 
                 <div className="p-2.5 bg-slate-50 border border-slate-200 rounded-xs">
                   <div className="text-[10px] font-semibold text-[#64748B] uppercase">Reliability Index</div>
-                  <div className="mt-1 font-bold text-emerald-700">
-                    89 / 100
+                  <div
+                    className={`mt-1 font-bold ${
+                      isCompleted ? 'text-emerald-700' : 'text-amber-600'
+                    }`}
+                  >
+                    {isCompleted
+                      ? '89 / 100'
+                      : pipelineState === 'running'
+                      ? 'Calculating...'
+                      : 'Pending'}
                   </div>
                 </div>
               </div>
@@ -357,7 +394,7 @@ export default function MissionPipelineExecutionModal() {
             </div>
 
             {/* Clean Light Institutional Activity Table */}
-            <div className="max-h-44 overflow-y-auto divide-y divide-slate-200 text-xs scrollbar-thin">
+            <div ref={logBoxRef} className="max-h-44 overflow-y-auto divide-y divide-slate-200 text-xs scrollbar-thin">
               <div className="sticky top-0 bg-slate-50 border-b border-slate-300 text-[#082B52] font-bold text-[10px] uppercase tracking-wider grid grid-cols-12 px-3 py-1.5 select-none">
                 <span className="col-span-2">TIME</span>
                 <span className="col-span-3">MODULE</span>
@@ -405,8 +442,6 @@ export default function MissionPipelineExecutionModal() {
                   );
                 })
               )}
-
-              <div ref={terminalEndRef} />
             </div>
           </div>
 
@@ -431,6 +466,14 @@ export default function MissionPipelineExecutionModal() {
           <div className="flex items-center gap-3 w-full sm:w-auto">
             {isCompleted ? (
               <>
+                <button
+                  onClick={() => setIsModalOpen(false)}
+                  className="w-full sm:w-auto px-4 py-2 rounded-xs bg-white hover:bg-slate-100 text-slate-700 border border-slate-300 text-xs font-semibold transition-colors cursor-pointer shadow-xs flex items-center justify-center gap-1.5"
+                  title="Close modal and stay on current page"
+                >
+                  <X size={14} />
+                  <span>Close Window</span>
+                </button>
                 <button
                   onClick={handleGoToReports}
                   className="w-full sm:w-auto px-4 py-2 rounded-xs bg-slate-700 hover:bg-slate-800 text-white border border-slate-700 text-xs font-semibold transition-colors cursor-pointer shadow-xs"

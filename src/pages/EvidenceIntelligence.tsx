@@ -1073,6 +1073,121 @@ export default function EvidenceIntelligence() {
               </div>
             </div>
 
+            {/* CLASS-SPECIFIC RELIABILITY FORMULA CARD (Executive Mathematical Representation) */}
+            <div className="rounded-xl border border-navy-100 bg-mist-100/70 p-3.5 space-y-3 shadow-2xs relative">
+              <div className="flex items-center justify-between relative z-10">
+                <div className="flex items-center gap-2">
+                  <div className="w-6 h-6 rounded-md bg-ocean-50 text-ocean flex items-center justify-center border border-ocean-200">
+                    <Calculator size={13} />
+                  </div>
+                  <div>
+                    <span className="text-xs font-bold tracking-wide uppercase font-sans text-navy">
+                      Adaptive Evidence Fusion Formula
+                    </span>
+                    <span className="text-[10px] text-navy-400 block font-sans">
+                      SIH 26057 Profile: <strong className="text-navy-700">{reliabilityData.formulaDef.title}</strong>
+                    </span>
+                  </div>
+                </div>
+                <button
+                  onClick={() => setShowAllFormulasModal(true)}
+                  className="px-2.5 py-1 rounded-md bg-white hover:bg-navy-50 text-[10px] font-sans font-medium text-ocean border border-navy-200 transition-colors flex items-center gap-1 cursor-pointer shadow-2xs"
+                >
+                  <span>View All Profiles</span>
+                  <ChevronRight size={11} />
+                </button>
+              </div>
+
+              {/* Mathematical Equation Rendered with Token Badges */}
+              <div className="bg-white rounded-lg p-3 border border-navy-100 font-sans space-y-2 relative z-10 shadow-2xs">
+                {/* Canonical Symbolic Equation */}
+                <div className="flex items-center gap-1.5 flex-wrap text-xs text-navy-800">
+                  <span className="px-2 py-0.5 rounded bg-ocean-50 text-ocean-700 font-bold border border-ocean-200 font-sans">
+                    R_{activeItem.classKey}
+                  </span>
+                  <span className="text-navy-600 font-bold">= 100 × (</span>
+                  <span className="px-1.5 py-0.5 rounded bg-blue-50 text-blue-700 border border-blue-200 font-semibold font-sans">
+                    {(reliabilityData.formulaDef.weights.c_ai).toFixed(2)} · C_AI
+                  </span>
+                  <span className="text-navy-400 font-bold">+</span>
+                  <span className="px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-200 font-semibold font-sans">
+                    {(reliabilityData.formulaDef.weights.s_shape).toFixed(2)} · S_shape
+                  </span>
+                  {reliabilityData.formulaDef.weights.s_shadow > 0 ? (
+                    <>
+                      <span className="text-navy-400 font-bold">+</span>
+                      <span className="px-1.5 py-0.5 rounded bg-amber-50 text-amber-700 border border-amber-200 font-semibold font-sans">
+                        {(reliabilityData.formulaDef.weights.s_shadow).toFixed(2)} · S_shadow
+                      </span>
+                    </>
+                  ) : null}
+                  <span className="text-navy-400 font-bold">+</span>
+                  <span className="px-1.5 py-0.5 rounded bg-purple-50 text-purple-700 border border-purple-200 font-semibold font-sans">
+                    {(reliabilityData.formulaDef.weights.s_context).toFixed(2)} · S_context
+                  </span>
+                  <span className="text-navy-600 font-bold">)</span>
+                </div>
+
+                {/* Substituted Numerical Values */}
+                <div className="text-[11px] text-navy-600 pt-1.5 border-t border-navy-100 overflow-x-auto whitespace-nowrap flex items-center gap-1.5 font-sans">
+                  <span className="text-ocean font-bold">= 100 × (</span>
+                  <span className="text-blue-700 font-semibold">
+                    {(reliabilityData.formulaDef.weights.c_ai * activeItem.c_ai).toFixed(3)}
+                  </span>
+                  <span className="text-navy-400">+</span>
+                  <span className="text-emerald-700 font-semibold">
+                    {(reliabilityData.formulaDef.weights.s_shape * activeItem.s_shape).toFixed(3)}
+                  </span>
+                  {reliabilityData.formulaDef.weights.s_shadow > 0 ? (
+                    <>
+                      <span className="text-navy-400">+</span>
+                      <span className="text-amber-700 font-semibold">
+                        {(reliabilityData.formulaDef.weights.s_shadow * (activeItem.s_shadow ?? 0)).toFixed(3)}
+                      </span>
+                    </>
+                  ) : null}
+                  <span className="text-navy-400">+</span>
+                  <span className="text-purple-700 font-semibold">
+                    {(reliabilityData.formulaDef.weights.s_context * activeItem.s_context).toFixed(3)}
+                  </span>
+                  <span className="text-ocean font-bold">)</span>
+                  <span className="text-emerald-600 font-extrabold ml-1">
+                    = {reliabilityData.computedPercentage.toFixed(1)}%
+                  </span>
+                </div>
+              </div>
+
+              {/* Weight Distribution Footer */}
+              <div className="flex flex-wrap items-center justify-between gap-2 pt-1 border-t border-navy-100 text-[10px] font-sans relative z-10">
+                {reliabilityData.formulaDef.note ? (
+                  <div className="text-amber-700 font-medium flex items-center gap-1">
+                    <AlertCircle size={11} className="text-amber-600 flex-shrink-0" />
+                    <span>{reliabilityData.formulaDef.note}</span>
+                  </div>
+                ) : (
+                  <div className="text-emerald-700 font-medium flex items-center gap-1">
+                    <CheckCircle2 size={11} className="text-emerald-600 flex-shrink-0" />
+                    <span>Normalized Class Weights (Total = 1.00)</span>
+                  </div>
+                )}
+
+                <div className="flex items-center gap-1.5 text-[9px]">
+                  <span className="px-1.5 py-0.5 rounded bg-blue-50 text-blue-700 border border-blue-200 font-medium">
+                    C_AI: {(reliabilityData.formulaDef.weights.c_ai * 100).toFixed(0)}%
+                  </span>
+                  <span className="px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-200 font-medium">
+                    Shape: {(reliabilityData.formulaDef.weights.s_shape * 100).toFixed(0)}%
+                  </span>
+                  <span className={`px-1.5 py-0.5 rounded border ${reliabilityData.formulaDef.weights.s_shadow === 0 ? 'bg-amber-50 text-amber-700 border-amber-200' : 'bg-amber-50 text-amber-700 border-amber-200'} font-medium`}>
+                    Shadow: {(reliabilityData.formulaDef.weights.s_shadow * 100).toFixed(0)}%
+                  </span>
+                  <span className="px-1.5 py-0.5 rounded bg-purple-50 text-purple-700 border border-purple-200 font-medium">
+                    Context: {(reliabilityData.formulaDef.weights.s_context * 100).toFixed(0)}%
+                  </span>
+                </div>
+              </div>
+            </div>
+
             {/* 3 Evidence Cards: Shadow, Segmentation (BBox + Mask), Context */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-2.5">
               {/* 1. Shadow Evidence Card (Click to Expand) */}
@@ -1341,124 +1456,6 @@ export default function EvidenceIntelligence() {
               </div>
             </div>
 
-            {/* CLASS-SPECIFIC RELIABILITY FORMULA CARD (Executive Mathematical Representation) */}
-            <div className="rounded-xl border border-navy-800/90 bg-gradient-to-br from-[#071326] via-[#091b36] to-[#0c2447] text-white p-4 space-y-3 shadow-md relative overflow-hidden">
-              {/* Subtle background glow */}
-              <div className="absolute top-0 right-0 w-48 h-48 bg-ocean-500/10 rounded-full blur-2xl pointer-events-none" />
-
-              <div className="flex items-center justify-between relative z-10">
-                <div className="flex items-center gap-2">
-                  <div className="w-6 h-6 rounded-md bg-ocean-500/20 text-ocean-300 flex items-center justify-center border border-ocean-400/30">
-                    <Calculator size={13} />
-                  </div>
-                  <div>
-                    <span className="text-xs font-bold tracking-wide uppercase font-mono text-cyan-300">
-                      Adaptive Evidence Fusion Formula
-                    </span>
-                    <span className="text-[10px] text-navy-300 block font-sans">
-                      SIH 26057 Profile: <strong className="text-white">{reliabilityData.formulaDef.title}</strong>
-                    </span>
-                  </div>
-                </div>
-                <button
-                  onClick={() => setShowAllFormulasModal(true)}
-                  className="px-2.5 py-1 rounded-md bg-white/10 hover:bg-white/20 text-[10px] font-mono text-cyan-200 border border-white/10 transition-colors flex items-center gap-1 cursor-pointer"
-                >
-                  <span>View All Profiles</span>
-                  <ChevronRight size={11} />
-                </button>
-              </div>
-
-              {/* Mathematical Equation Rendered with Token Badges */}
-              <div className="bg-navy-950/80 rounded-lg p-3 border border-navy-800/80 font-mono space-y-2 relative z-10 shadow-inner">
-                {/* Canonical Symbolic Equation */}
-                <div className="flex items-center gap-1.5 flex-wrap text-xs text-white">
-                  <span className="px-2 py-0.5 rounded bg-cyan-900/60 text-cyan-300 font-bold border border-cyan-700/40">
-                    R_{activeItem.classKey}
-                  </span>
-                  <span className="text-slate-400 font-bold">= 100 × (</span>
-                  <span className="px-1.5 py-0.5 rounded bg-blue-950/80 text-blue-300 border border-blue-800/40">
-                    {(reliabilityData.formulaDef.weights.c_ai).toFixed(2)} · C_AI
-                  </span>
-                  <span className="text-slate-400">+</span>
-                  <span className="px-1.5 py-0.5 rounded bg-emerald-950/80 text-emerald-300 border border-emerald-800/40">
-                    {(reliabilityData.formulaDef.weights.s_shape).toFixed(2)} · S_shape
-                  </span>
-                  {reliabilityData.formulaDef.weights.s_shadow > 0 ? (
-                    <>
-                      <span className="text-slate-400">+</span>
-                      <span className="px-1.5 py-0.5 rounded bg-amber-950/80 text-amber-300 border border-amber-800/40">
-                        {(reliabilityData.formulaDef.weights.s_shadow).toFixed(2)} · S_shadow
-                      </span>
-                    </>
-                  ) : null}
-                  <span className="text-slate-400">+</span>
-                  <span className="px-1.5 py-0.5 rounded bg-purple-950/80 text-purple-300 border border-purple-800/40">
-                    {(reliabilityData.formulaDef.weights.s_context).toFixed(2)} · S_context
-                  </span>
-                  <span className="text-slate-400 font-bold">)</span>
-                </div>
-
-                {/* Substituted Numerical Values */}
-                <div className="text-[11px] text-slate-300 pt-1 border-t border-navy-800/60 overflow-x-auto whitespace-nowrap flex items-center gap-1.5">
-                  <span className="text-cyan-400 font-bold">= 100 × (</span>
-                  <span className="text-blue-300">
-                    {(reliabilityData.formulaDef.weights.c_ai * activeItem.c_ai).toFixed(3)}
-                  </span>
-                  <span className="text-slate-500">+</span>
-                  <span className="text-emerald-300">
-                    {(reliabilityData.formulaDef.weights.s_shape * activeItem.s_shape).toFixed(3)}
-                  </span>
-                  {reliabilityData.formulaDef.weights.s_shadow > 0 ? (
-                    <>
-                      <span className="text-slate-500">+</span>
-                      <span className="text-amber-300">
-                        {(reliabilityData.formulaDef.weights.s_shadow * (activeItem.s_shadow ?? 0)).toFixed(3)}
-                      </span>
-                    </>
-                  ) : null}
-                  <span className="text-slate-500">+</span>
-                  <span className="text-purple-300">
-                    {(reliabilityData.formulaDef.weights.s_context * activeItem.s_context).toFixed(3)}
-                  </span>
-                  <span className="text-cyan-400 font-bold">)</span>
-                  <span className="text-emerald-400 font-extrabold ml-1">
-                    = {reliabilityData.computedPercentage.toFixed(1)}%
-                  </span>
-                </div>
-              </div>
-
-              {/* Weight Distribution Footer */}
-              <div className="flex flex-wrap items-center justify-between gap-2 pt-1 border-t border-navy-800/60 text-[10px] font-mono relative z-10">
-                {reliabilityData.formulaDef.note ? (
-                  <div className="text-amber-300 font-medium flex items-center gap-1">
-                    <AlertCircle size={11} className="text-amber-400 flex-shrink-0" />
-                    <span>{reliabilityData.formulaDef.note}</span>
-                  </div>
-                ) : (
-                  <div className="text-emerald-400 font-medium flex items-center gap-1">
-                    <CheckCircle2 size={11} className="flex-shrink-0" />
-                    <span>Normalized Class Weights (Total = 1.00)</span>
-                  </div>
-                )}
-
-                <div className="flex items-center gap-1.5 text-[9px]">
-                  <span className="px-1.5 py-0.5 rounded bg-blue-950/90 text-blue-300 border border-blue-800/30">
-                    C_AI: {(reliabilityData.formulaDef.weights.c_ai * 100).toFixed(0)}%
-                  </span>
-                  <span className="px-1.5 py-0.5 rounded bg-emerald-950/90 text-emerald-300 border border-emerald-800/30">
-                    Shape: {(reliabilityData.formulaDef.weights.s_shape * 100).toFixed(0)}%
-                  </span>
-                  <span className={`px-1.5 py-0.5 rounded border ${reliabilityData.formulaDef.weights.s_shadow === 0 ? 'bg-amber-950/90 text-amber-300 border-amber-800/30' : 'bg-amber-950/90 text-amber-300 border-amber-800/30'}`}>
-                    Shadow: {(reliabilityData.formulaDef.weights.s_shadow * 100).toFixed(0)}%
-                  </span>
-                  <span className="px-1.5 py-0.5 rounded bg-purple-950/90 text-purple-300 border border-purple-800/30">
-                    Context: {(reliabilityData.formulaDef.weights.s_context * 100).toFixed(0)}%
-                  </span>
-                </div>
-              </div>
-            </div>
-
             {/* Bottom Row: Large Bold Evaluated Reliability Score & Confirmation Badge */}
             <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-3 border-t border-navy-100">
               <div className="w-full sm:w-1/2 space-y-1.5">
@@ -1573,38 +1570,38 @@ export default function EvidenceIntelligence() {
       {/* ALL 5 CLASS FORMULAS REFERENCE MODAL */}
       {showAllFormulasModal && (
         <div
-          className="fixed inset-0 z-50 bg-navy-950/85 backdrop-blur-md flex items-center justify-center p-4 animate-fade-in"
+          className="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-4 animate-fade-in"
           onClick={() => setShowAllFormulasModal(false)}
         >
           <div
-            className="bg-navy-900 border border-navy-700/80 rounded-2xl max-w-3xl w-full overflow-hidden shadow-2xl flex flex-col"
+            className="bg-white border border-navy-100 rounded-2xl max-w-3xl w-full overflow-hidden shadow-2xl flex flex-col"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Modal Header */}
-            <div className="flex items-center justify-between px-6 py-4 border-b border-navy-800 bg-navy-950/80">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-navy-100 bg-mist-100/60">
               <div className="flex items-center gap-3">
-                <div className="p-2 rounded-lg bg-ocean/20 border border-ocean/30 text-ocean">
+                <div className="p-2 rounded-lg bg-ocean-50 border border-ocean-200 text-ocean">
                   <Calculator size={18} />
                 </div>
                 <div>
-                  <h3 className="text-base font-bold text-white">
+                  <h3 className="text-base font-bold text-navy font-sans">
                     Class-Specific Reliability Formulas
                   </h3>
-                  <p className="text-xs text-navy-400 mt-0.5">
+                  <p className="text-xs text-navy-400 mt-0.5 font-sans">
                     Authentic equations defining multi-modal evidence fusion for each target debris class
                   </p>
                 </div>
               </div>
               <button
                 onClick={() => setShowAllFormulasModal(false)}
-                className="w-8 h-8 rounded-lg bg-navy-800 text-navy-300 hover:text-white hover:bg-navy-700 flex items-center justify-center transition-colors"
+                className="w-8 h-8 rounded-lg text-navy-400 hover:text-navy-700 hover:bg-navy-100/60 flex items-center justify-center transition-colors"
               >
                 <X size={18} />
               </button>
             </div>
 
             {/* Modal Body: The 5 Formulas */}
-            <div className="p-6 space-y-4 max-h-[70vh] overflow-y-auto font-mono text-xs">
+            <div className="p-6 space-y-3.5 max-h-[70vh] overflow-y-auto font-sans text-xs bg-white">
               {Object.entries(CLASS_FORMULAS).map(([key, def], idx) => {
                 const isCurrent = activeItem.classKey === key;
 
@@ -1613,51 +1610,76 @@ export default function EvidenceIntelligence() {
                     key={key}
                     className={`p-4 rounded-xl border transition-all ${
                       isCurrent
-                        ? 'bg-navy-950 border-ocean ring-1 ring-ocean/50 shadow-md'
-                        : 'bg-navy-950/60 border-navy-800'
+                        ? 'bg-ocean-50/40 border-ocean ring-1 ring-ocean/30 shadow-2xs'
+                        : 'bg-mist-100/50 border-navy-100'
                     }`}
                   >
                     <div className="flex items-center justify-between mb-2">
                       <div className="flex items-center gap-2">
-                        <span className="text-navy-400 font-bold text-sm">
+                        <span className="text-navy-400 font-bold text-sm font-sans">
                           {idx + 1}.
                         </span>
-                        <span className="text-white font-bold text-sm font-sans">
+                        <span className="text-navy font-bold text-sm font-sans">
                           {def.title}
                         </span>
                         {isCurrent && (
-                          <span className="px-2 py-0.5 rounded bg-ocean text-white text-[10px] font-bold">
-                            CURRENT CLASS
+                          <span className="px-2 py-0.5 rounded bg-ocean text-white text-[10px] font-bold font-sans">
+                            CURRENT DETECTED CLASS
                           </span>
                         )}
                       </div>
                       {def.weights.s_shadow === 0 && (
-                        <span className="px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/40 text-[10px] font-bold">
+                        <span className="px-2 py-0.5 rounded bg-amber-50 text-amber-700 border border-amber-200 text-[10px] font-bold font-sans">
                           Shadow weight = 0
                         </span>
                       )}
                     </div>
 
-                    <div className="p-2.5 rounded-lg bg-[#060a12] border border-navy-800 text-teal-300 text-xs overflow-x-auto whitespace-nowrap mb-2">
-                      {def.equation}
-                    </div>
+                    {isCurrent ? (
+                      /* Active Target Evaluation Result (Section 12 of MVP Architecture) */
+                      <div className="p-2.5 rounded-lg bg-emerald-50/80 border border-emerald-200 text-navy-800 font-sans text-xs flex items-center justify-between mb-2 shadow-2xs">
+                        <div className="flex items-center gap-2">
+                          <span className="text-navy-600 font-medium">Evaluated Fusion Reliability:</span>
+                          <span className="text-emerald-700 font-extrabold text-sm">
+                            {reliabilityData.computedPercentage.toFixed(1)}%
+                          </span>
+                          <span className="px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold text-[9px] uppercase tracking-wide">
+                            {activeItem.reliability}
+                          </span>
+                        </div>
+                        <span className="text-[11px] text-navy-500 font-medium">
+                          Active Target: <strong className="text-navy-700">{activeItem.name}</strong>
+                        </span>
+                      </div>
+                    ) : (
+                      /* Architecture Profile Definition (Section 8.1 & 12 of MVP Architecture) */
+                      <div className="p-2.5 rounded-lg bg-white border border-navy-100 text-navy-800 font-sans text-xs flex items-center justify-between mb-2 shadow-2xs">
+                        <div className="flex items-center gap-2">
+                          <span className="text-navy-500 font-medium">Evidence Profile:</span>
+                          <span className="font-semibold text-navy-700">Fixed multi-modal weighting for {def.title}</span>
+                        </div>
+                        <span className="text-[10px] text-navy-400 font-sans">
+                          SIH 26057 §12 Architecture
+                        </span>
+                      </div>
+                    )}
 
-                    <div className="flex flex-wrap items-center justify-between gap-2 text-[11px] text-navy-400">
+                    <div className="flex flex-wrap items-center justify-between gap-2 text-[11px] text-navy-500 font-sans">
                       <div className="flex items-center gap-2">
                         <span>Weights:</span>
-                        <span className="text-white">C_AI: {(def.weights.c_ai * 100).toFixed(0)}%</span>
+                        <span className="text-navy-700 font-medium">C_AI: {(def.weights.c_ai * 100).toFixed(0)}%</span>
                         <span>•</span>
-                        <span className="text-white">S_shape: {(def.weights.s_shape * 100).toFixed(0)}%</span>
+                        <span className="text-navy-700 font-medium">S_shape: {(def.weights.s_shape * 100).toFixed(0)}%</span>
                         <span>•</span>
-                        <span className={def.weights.s_shadow === 0 ? 'text-amber-400 font-bold' : 'text-white'}>
+                        <span className={def.weights.s_shadow === 0 ? 'text-amber-600 font-bold' : 'text-navy-700 font-medium'}>
                           S_shadow: {(def.weights.s_shadow * 100).toFixed(0)}%
                         </span>
                         <span>•</span>
-                        <span className="text-white">S_context: {(def.weights.s_context * 100).toFixed(0)}%</span>
+                        <span className="text-navy-700 font-medium">S_context: {(def.weights.s_context * 100).toFixed(0)}%</span>
                       </div>
 
                       {def.note && (
-                        <span className="text-amber-400 text-[10px] font-sans">
+                        <span className="text-amber-600 text-[10px] font-sans">
                           {def.note}
                         </span>
                       )}
@@ -1668,11 +1690,11 @@ export default function EvidenceIntelligence() {
             </div>
 
             {/* Modal Footer */}
-            <div className="px-6 py-3.5 border-t border-navy-800 bg-navy-950/80 flex items-center justify-between text-xs text-navy-400">
+            <div className="px-6 py-3.5 border-t border-navy-100 bg-mist-100/60 flex items-center justify-between text-xs text-navy-500 font-sans">
               <span>Formulas strictly adhere to maritime side-scan sonar physics specifications.</span>
               <button
                 onClick={() => setShowAllFormulasModal(false)}
-                className="px-4 py-1.5 rounded-lg bg-ocean hover:bg-ocean-600 text-white font-semibold transition-colors"
+                className="px-4 py-1.5 rounded-lg bg-ocean hover:bg-ocean-600 text-white font-semibold transition-colors shadow-xs"
               >
                 Done
               </button>
