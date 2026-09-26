@@ -5,6 +5,8 @@ interface ActiveSurveyCardProps {
   metadata: SurveyMetadata | null;
   isMetadataLoaded?: boolean;
   onContinue: () => void;
+  onStartPipeline?: () => void;
+  pipelineState?: string;
   onEdit?: () => void;
   isReady?: boolean;
   validCount?: number;
